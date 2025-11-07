@@ -1,0 +1,323 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/**
+ * ============================================================
+ * ENUMS
+ * ============================================================
+ */
+
+enum PackageType {
+  FREE
+  TEAM_PACKAGE
+  TOURNAMENT_PACKAGE
+  PRO_PACKAGE
+}
+
+enum Role {
+  OWNER
+  MANAGER
+  MEMBER
+}
+
+enum GameType {
+  SINGLES
+  DOUBLES
+  MIXED
+}
+
+enum WinningTeam {
+  A
+  B
+  DRAW
+}
+
+enum PaymentType {
+  TEAM_PURCHASE
+  TOURNAMENT_PURCHASE
+  PACKAGE_SUBSCRIPTION
+  MANUAL_CREDIT
+}
+
+enum ActivityType {
+  TEAM_CREATED
+  TOURNAMENT_CREATED
+  GAME_PLAYED
+  GAME_WON
+  MEMBER_ADDED
+  PAYMENT_MADE
+}
+
+/**
+ * ============================================================
+ * USER & CORE
+ * ============================================================
+ */
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String?  @unique
+  email     String   @unique
+  name      String?
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  points    Int      @default(0)
+  wins      Int      @default(0)
+  losses    Int      @default(0)
+
+  packageType     PackageType @default(FREE)
+  teamQuota       Int         @default(0)
+  tournamentQuota Int         @default(0)
+  teamCount       Int         @default(0)
+  tournamentCount Int         @default(0)
+  planExpiresAt   DateTime?
+
+  teamsOwned       Team[]         @relation("ownerTeams")
+  tournamentsOwned Tournament[]   @relation("ownerTournaments")
+  memberships      TeamMember[]
+  payments         Payment[]
+  notifications    Notification[]
+  activities       Activity[]
+
+  @@index([email])
+}
+
+/**
+ * ============================================================
+ * TEAMS
+ * ============================================================
+ */
+
+model Team {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  ownerId   String
+  createdAt DateTime @default(now())
+
+  owner           User             @relation("ownerTeams", fields: [ownerId], references: [id])
+  members         TeamMember[]
+  sessions        Session[]
+  pairStats       PairStat[]
+  tournamentTeams TournamentTeam[]
+  calendarEvents  CalendarEvent[]
+
+  @@index([ownerId])
+}
+
+model TeamMember {
+  id       String   @id @default(cuid())
+  teamId   String
+  userId   String?
+  email    String
+  role     Role     @default(MEMBER)
+  joinedAt DateTime @default(now())
+
+  team Team  @relation(fields: [teamId], references: [id])
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([teamId])
+  @@index([email])
+}
+
+/**
+ * ============================================================
+ * TEAM SESSIONS & GAMES
+ * ============================================================
+ */
+
+model Session {
+  id        String   @id @default(cuid())
+  slug      String?  @unique @default(cuid())
+  teamId    String
+  name      String?
+  date      DateTime
+  createdAt DateTime @default(now())
+
+  team  Team   @relation(fields: [teamId], references: [id])
+  games Game[]
+}
+
+model Game {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  sessionId    String
+  teamAPlayers String[]
+  teamBPlayers String[]
+  winner       String? // "A" | "B"
+  createdAt    DateTime @default(now())
+
+  session Session @relation(fields: [sessionId], references: [id])
+}
+
+/**
+ * ============================================================
+ * PAIR STATS
+ * ============================================================
+ */
+
+model PairStat {
+  id      String @id @default(cuid())
+  teamId  String
+  playerA String
+  playerB String
+  plays   Int    @default(0)
+  wins    Int    @default(0)
+
+  team Team @relation(fields: [teamId], references: [id])
+
+  @@unique([teamId, playerA, playerB])
+  @@index([teamId])
+}
+
+/**
+ * ============================================================
+ * TOURNAMENTS
+ * ============================================================
+ */
+
+model Tournament {
+  id                String   @id @default(cuid())
+  name              String
+  slug              String   @unique
+  ownerId           String
+  createdAt         DateTime @default(now())
+  isActive          Boolean  @default(true)
+  minGamesPerPlayer Int      @default(0)
+  bannerUrl         String?
+
+  owner           User             @relation("ownerTournaments", fields: [ownerId], references: [id])
+  stages          Stage[]
+  tournamentTeams TournamentTeam[]
+  games           TournamentGame[]
+  calendarEvents  CalendarEvent[]
+
+  @@index([ownerId])
+}
+
+model TournamentTeam {
+  id           String  @id @default(cuid())
+  tournamentId String
+  teamId       String
+  thumbnailUrl String?
+
+  tournament       Tournament       @relation(fields: [tournamentId], references: [id])
+  team             Team             @relation(fields: [teamId], references: [id])
+  tournamentGamesA TournamentGame[] @relation("TeamARef")
+  tournamentGamesB TournamentGame[] @relation("TeamBRef")
+
+  @@unique([tournamentId, teamId])
+  @@index([tournamentId])
+}
+
+model TournamentGame {
+  id           String       @id @default(cuid())
+  tournamentId String
+  stageId      String?
+  teamAId      String
+  teamBId      String
+  teamAPlayers String[]
+  teamBPlayers String[]
+  winningTeam  WinningTeam?
+  scheduleTime DateTime?
+  completedAt  DateTime?
+  createdAt    DateTime     @default(now())
+
+  tournament Tournament     @relation(fields: [tournamentId], references: [id])
+  stage      Stage?         @relation(fields: [stageId], references: [id])
+  teamA      TournamentTeam @relation("TeamARef", fields: [teamAId], references: [id])
+  teamB      TournamentTeam @relation("TeamBRef", fields: [teamBId], references: [id])
+
+  @@index([tournamentId])
+  @@index([teamAId])
+  @@index([teamBId])
+}
+
+model Stage {
+  id           String   @id @default(cuid())
+  tournamentId String
+  name         String
+  order        Int
+  createdAt    DateTime @default(now())
+
+  tournament Tournament       @relation(fields: [tournamentId], references: [id])
+  games      TournamentGame[]
+
+  @@index([tournamentId])
+}
+
+/**
+ * ============================================================
+ * PAYMENTS & LOGGING
+ * ============================================================
+ */
+
+model Payment {
+  id          String      @id @default(cuid())
+  userId      String
+  type        PaymentType
+  amount      Decimal
+  currency    String      @default("INR")
+  referenceId String?
+  createdAt   DateTime    @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+/**
+ * ============================================================
+ * NOTIFICATIONS, ACTIVITY, CALENDAR
+ * ============================================================
+ */
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model Activity {
+  id        String       @id @default(cuid())
+  userId    String
+  type      ActivityType
+  refId     String?
+  message   String?
+  createdAt DateTime     @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([type])
+}
+
+model CalendarEvent {
+  id           String    @id @default(cuid())
+  title        String
+  description  String?
+  startTime    DateTime
+  endTime      DateTime?
+  location     String?
+  tournamentId String?
+  teamId       String?
+  createdAt    DateTime  @default(now())
+
+  tournament Tournament? @relation(fields: [tournamentId], references: [id])
+  team       Team?       @relation(fields: [teamId], references: [id])
+
+  @@index([startTime])
+}
