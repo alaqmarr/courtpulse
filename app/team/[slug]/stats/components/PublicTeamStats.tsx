@@ -1,3 +1,4 @@
+// src/app/teams/[id]/PublicTeamStats.tsx (or similar)
 "use client";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -9,9 +10,8 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
 import LeaderboardCharts from "../../components/LeaderboardCharts";
+// Note: 'Tabs' and 'Separator' imports are removed.
 
 /* -------------------- MAIN PUBLIC STATS -------------------- */
 export default function PublicTeamStats({ team }: { team: any }) {
@@ -26,8 +26,10 @@ export default function PublicTeamStats({ team }: { team: any }) {
     (stats.reduce(
       (acc, s) => acc + (s.wins / (s.wins + s.losses || 1)),
       0
-    ) / stats.length) * 100
-  ).toFixed(2);
+    ) /
+      (stats.length || 1)) * // Avoid division by zero
+    100
+  ).toFixed(1); // Changed to 1 decimal for cleaner look
 
   return (
     <Card>
@@ -36,69 +38,57 @@ export default function PublicTeamStats({ team }: { team: any }) {
       </CardHeader>
 
       <CardContent>
-        {/* Summary Section */}
+        {/* Summary Section - Softer, more minimal blocks */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 text-center">
-          <div className="p-3 rounded-md border">
+          <div className="p-3 rounded-md bg-muted">
             <p className="text-sm text-muted-foreground">Top Player</p>
-            <p className="text-lg font-semibold">{topPlayer?.name || "N/A"}</p>
+            <p className="text-lg font-semibold truncate">
+              {topPlayer?.name || "N/A"}
+            </p>
           </div>
-          <div className="p-3 rounded-md border">
+          <div className="p-3 rounded-md bg-muted">
             <p className="text-sm text-muted-foreground">Avg Win Rate</p>
             <p className="text-lg font-semibold">{avgWinRate}%</p>
           </div>
-          <div className="p-3 rounded-md border">
+          <div className="p-3 rounded-md bg-muted">
             <p className="text-sm text-muted-foreground">Total Matches</p>
             <p className="text-lg font-semibold">{games.length}</p>
           </div>
         </div>
 
-        {/* Tabs */}
-        <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList className="flex-wrap">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="leaderboard-chart">
-              Leaderboard (Chart)
-            </TabsTrigger>
-            <TabsTrigger value="leaderboard-table">
-              Leaderboard (Table)
-            </TabsTrigger>
-            <TabsTrigger value="pairs">Winning Pairs</TabsTrigger>
-          </TabsList>
+        {/* --- Leaderboard Table (Primary Content) --- */}
+        <div className="mb-8">
+          <h3 className="text-lg font-semibold mb-3">Leaderboard</h3>
+          <LeaderboardTable stats={stats} />
+        </div>
 
-          {/* Overview */}
-          <TabsContent value="overview">
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={stats}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="wins" fill="#4ade80" />
-                <Bar dataKey="losses" fill="#f87171" />
-              </BarChart>
-            </ResponsiveContainer>
-          </TabsContent>
+        {/* --- Charts Section (Responsive Grid) --- */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Player Stats</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <LeaderboardCharts stats={stats} />
+            </CardContent>
+          </Card>
 
-          {/* Leaderboard Chart */}
-          <TabsContent value="leaderboard-chart">
-            <LeaderboardCharts stats={stats} />
-          </TabsContent>
-
-          {/* Leaderboard Table */}
-          <TabsContent value="leaderboard-table">
-            <LeaderboardTable stats={stats} />
-          </TabsContent>
-
-          {/* Winning Pairs */}
-          <TabsContent value="pairs">
-            <WinningPairs games={games} />
-          </TabsContent>
-        </Tabs>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Top Winning Pairs</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <WinningPairs games={games} />
+            </CardContent>
+          </Card>
+        </div>
       </CardContent>
     </Card>
   );
 }
 
 /* -------------------- COMPUTATION -------------------- */
+// (This function is unchanged, it's pure logic)
 function calculateStats(games: any[], members: any[]) {
   const map: Record<
     string,
@@ -140,12 +130,20 @@ function LeaderboardTable({
 }: {
   stats: { name: string; wins: number; losses: number; points: number }[];
 }) {
+  // Helper to get medal icons for top 3
+  const getRankDisplay = (index: number) => {
+    if (index === 0) return "🥇";
+    if (index === 1) return "🥈";
+    if (index === 2) return "🥉";
+    return index + 1;
+  };
+
   return (
     <div className="overflow-x-auto border rounded-md">
       <table className="w-full text-sm border-collapse">
         <thead className="bg-muted/50">
           <tr className="border-b text-left">
-            <th className="py-2 px-3">Rank</th>
+            <th className="py-2 px-3 text-center">Rank</th>
             <th className="py-2 px-3">Player</th>
             <th className="py-2 px-3">Games</th>
             <th className="py-2 px-3 text-green-600">Wins</th>
@@ -161,9 +159,11 @@ function LeaderboardTable({
             return (
               <tr
                 key={p.name}
-                className="border-b hover:bg-muted/30 transition-colors"
+                className="border-b last:border-b-0 hover:bg-muted/30 transition-colors"
               >
-                <td className="py-2 px-3 font-medium">{i + 1}</td>
+                <td className="py-2 px-3 font-medium text-center">
+                  {getRankDisplay(i)}
+                </td>
                 <td className="py-2 px-3">{p.name}</td>
                 <td className="py-2 px-3">{total}</td>
                 <td className="py-2 px-3 text-green-600">{p.wins}</td>
@@ -191,25 +191,43 @@ function WinningPairs({ games }: { games: any[] }) {
     }
   }
 
-  const data = Object.entries(pairs).map(([pair, wins]) => ({
-    pair,
-    wins,
-  }));
+  const data = Object.entries(pairs)
+    .map(([pair, wins]) => ({
+      pair,
+      wins,
+    }))
+    .sort((a, b) => b.wins - a.wins); // Sort by most wins
 
+  // Sleeker "No data" state
   if (data.length === 0)
     return (
-      <p className="text-sm text-muted-foreground text-center py-10">
-        No winning pairs yet.
-      </p>
+      <div className="flex items-center justify-center h-[300px] w-full border rounded-md bg-muted/30">
+        <p className="text-sm text-muted-foreground">No winning pairs yet.</p>
+      </div>
     );
 
   return (
+    // Sleek chart styles
     <ResponsiveContainer width="100%" height={300}>
-      <BarChart data={data}>
-        <XAxis dataKey="pair" />
-        <YAxis />
-        <Tooltip />
-        <Bar dataKey="wins" fill="#60a5fa" />
+      <BarChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+        <XAxis
+          dataKey="pair"
+          stroke="#888888"
+          fontSize={12}
+          tickLine={false}
+          axisLine={false}
+        />
+        <YAxis
+          stroke="#888888"
+          fontSize={12}
+          tickLine={false}
+          axisLine={false}
+        />
+        <Tooltip
+          cursor={{ fill: "transparent" }}
+          wrapperClassName="rounded-md border bg-popover px-3 py-2 text-sm text-popover-foreground shadow-md"
+        />
+        <Bar dataKey="wins" fill="#60a5fa" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );
