@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import CircularProgressChart from "./CircularProgressChart";
+import { Separator } from "@/components/ui/separator";
 
 /* -------------------- MAIN PUBLIC STATS -------------------- */
 export default function PublicTeamStats({ team }: { team: any }) {
@@ -31,6 +32,7 @@ export default function PublicTeamStats({ team }: { team: any }) {
   ).toFixed(1);
 
   return (
+    <>
     <Card>
       <CardHeader>
         <CardTitle>Team Statistics & Analytics</CardTitle>
@@ -61,7 +63,11 @@ export default function PublicTeamStats({ team }: { team: any }) {
           <LeaderboardTable stats={stats} />
         </div>
 
-        {/* --- Charts Section (Responsive Grid) --- */}
+
+      </CardContent>
+    </Card>
+    <Separator className="my-10" />
+    {/* --- Charts Section (Responsive Grid) --- */}
         <div className="grid grid-cols-1 gap-6">
           <Card>
             <CardHeader>
@@ -83,8 +89,7 @@ export default function PublicTeamStats({ team }: { team: any }) {
             </CardContent>
           </Card>
         </div>
-      </CardContent>
-    </Card>
+        </>
   );
 }
 
