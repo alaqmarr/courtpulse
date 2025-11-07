@@ -10,8 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import LeaderboardCharts from "../../components/LeaderboardCharts";
-// Note: 'Tabs' and 'Separator' imports are removed.
+import CircularProgressChart from "./CircularProgressChart";
 
 /* -------------------- MAIN PUBLIC STATS -------------------- */
 export default function PublicTeamStats({ team }: { team: any }) {
@@ -27,9 +26,9 @@ export default function PublicTeamStats({ team }: { team: any }) {
       (acc, s) => acc + (s.wins / (s.wins + s.losses || 1)),
       0
     ) /
-      (stats.length || 1)) * // Avoid division by zero
+      (stats.length || 1)) *
     100
-  ).toFixed(1); // Changed to 1 decimal for cleaner look
+  ).toFixed(1);
 
   return (
     <Card>
@@ -63,13 +62,14 @@ export default function PublicTeamStats({ team }: { team: any }) {
         </div>
 
         {/* --- Charts Section (Responsive Grid) --- */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Player Stats</CardTitle>
+              <CardTitle className="text-lg">Player Win Rates</CardTitle>
             </CardHeader>
             <CardContent>
-              <LeaderboardCharts stats={stats} />
+              {/* Using the new CircularProgressChart */}
+              <CircularProgressChart stats={stats} />
             </CardContent>
           </Card>
 
@@ -78,6 +78,7 @@ export default function PublicTeamStats({ team }: { team: any }) {
               <CardTitle className="text-lg">Top Winning Pairs</CardTitle>
             </CardHeader>
             <CardContent>
+              {/* WinningPairs will now handle its own legend */}
               <WinningPairs games={games} />
             </CardContent>
           </Card>
@@ -130,7 +131,6 @@ function LeaderboardTable({
 }: {
   stats: { name: string; wins: number; losses: number; points: number }[];
 }) {
-  // Helper to get medal icons for top 3
   const getRankDisplay = (index: number) => {
     if (index === 0) return "🥇";
     if (index === 1) return "🥈";
@@ -180,6 +180,17 @@ function LeaderboardTable({
 }
 
 /* -------------------- WINNING PAIRS -------------------- */
+const COLORS = [
+  "#8884d8", // Purple
+  "#82ca9d", // Green
+  "#ffc658", // Yellow
+  "#ff7300", // Orange
+  "#00c49f", // Teal
+  "#d0ed57", // Light Green
+  "#a4de6c", // Another Green
+  "#bada55", // Even another green
+]; // Extend this for more unique colors if needed
+
 function WinningPairs({ games }: { games: any[] }) {
   const pairs: Record<string, number> = {};
   for (const g of games) {
@@ -196,9 +207,8 @@ function WinningPairs({ games }: { games: any[] }) {
       pair,
       wins,
     }))
-    .sort((a, b) => b.wins - a.wins); // Sort by most wins
+    .sort((a, b) => b.wins - a.wins);
 
-  // Sleeker "No data" state
   if (data.length === 0)
     return (
       <div className="flex items-center justify-center h-[300px] w-full border rounded-md bg-muted/30">
@@ -206,29 +216,55 @@ function WinningPairs({ games }: { games: any[] }) {
       </div>
     );
 
+  // Generate a map of pair names to colors for the legend
+  const pairColors = new Map<string, string>();
+  data.forEach((item, index) => {
+    pairColors.set(item.pair, COLORS[index % COLORS.length]);
+  });
+
   return (
-    // Sleek chart styles
-    <ResponsiveContainer width="100%" height={300}>
-      <BarChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
-        <XAxis
-          dataKey="pair"
-          stroke="#888888"
-          fontSize={12}
-          tickLine={false}
-          axisLine={false}
-        />
-        <YAxis
-          stroke="#888888"
-          fontSize={12}
-          tickLine={false}
-          axisLine={false}
-        />
-        <Tooltip
-          cursor={{ fill: "transparent" }}
-          wrapperClassName="rounded-md border bg-popover px-3 py-2 text-sm text-popover-foreground shadow-md"
-        />
-        <Bar dataKey="wins" fill="#60a5fa" radius={[4, 4, 0, 0]} />
-      </BarChart>
-    </ResponsiveContainer>
+    <>
+      <div className="flex flex-wrap gap-x-4 gap-y-2 mb-4 justify-center text-sm">
+        {data.map((entry, index) => (
+          <div key={`legend-${index}`} className="flex items-center">
+            <span
+              className="inline-block h-3 w-3 rounded-full mr-2"
+              style={{ backgroundColor: pairColors.get(entry.pair) }}
+            ></span>
+            {entry.pair}
+          </div>
+        ))}
+      </div>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+          <XAxis
+            dataKey="pair"
+            stroke="#888888"
+            fontSize={12}
+            tickLine={false}
+            axisLine={false}
+          />
+          <YAxis
+            stroke="#888888"
+            fontSize={12}
+            tickLine={false}
+            axisLine={false}
+          />
+          <Tooltip
+            cursor={{ fill: "transparent" }}
+            wrapperClassName="rounded-md border bg-popover px-3 py-2 text-sm text-popover-foreground shadow-md"
+          />
+          <Bar dataKey="wins">
+            {data.map((entry, index) => (
+              <Bar
+                key={`bar-${index}`}
+                fill={COLORS[index % COLORS.length]}
+                radius={[4, 4, 0, 0]}
+              />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </>
   );
 }
