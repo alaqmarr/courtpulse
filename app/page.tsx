@@ -76,7 +76,7 @@ export default async function DashboardPage() {
     <main className="min-h-screen bg-background text-foreground">
       <div className="max-w-7xl mx-auto p-8 space-y-10">
         {/* ---------------- HEADER ---------------- */}
-        <section className="rounded-2xl border bg-gradient-to-br from-primary/5 to-transparent p-6 shadow-sm">
+        <section className="rounded-2xl border bg-linear-to-br from-primary/5 to-transparent p-6 shadow-sm">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <h1 className="text-3xl font-bold tracking-tight">
