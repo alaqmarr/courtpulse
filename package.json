@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "postinstall": "npx prisma db push && npx prisma generate && tsx scripts/backfill-user-links.ts"
+    "postinstall": "npx prisma db push && npx prisma generate"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.34.5",
