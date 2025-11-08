@@ -4,7 +4,7 @@ import { redirect, notFound } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import GameCreator from "./GameCreator";
-import GamesList from "./GamesList";
+import GamesList from "./GameList";
 
 export const dynamic = "force-dynamic";
 
