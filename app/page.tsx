@@ -269,12 +269,18 @@ export default async function DashboardPage() {
                       </span>
                     </div>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="flex flex-col gap-2">
+                    <Link href={`/team/${team.slug}`}>
+                      <Button className="w-full" variant="secondary">
+                        {user.id === team.ownerId ? "Manage" : "View"}
+                      </Button>
+                    </Link>
                     <Link href={`/team/${team.slug}/stats`}>
                       <Button className="w-full" variant="secondary">
                         View Stats
                       </Button>
                     </Link>
+                    
                   </CardContent>
                 </Card>
               ))}
@@ -300,10 +306,10 @@ export default async function DashboardPage() {
                       </span>
                     </div>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="flex flex-col gap-2">
                     <Link href={`/tournament/${t.slug}`}>
                       <Button className="w-full" variant="secondary">
-                        View Tournament
+                        {user.id === t.ownerId ? "Manage Tournament" : "View Tournament"}
                       </Button>
                     </Link>
                   </CardContent>
