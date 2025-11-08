@@ -2,14 +2,12 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import "./globals.css";
-import { ensureUserLinks } from "@/lib/startup";
 
 export const metadata: Metadata = {
   title: "Pulse Court",
   description: "Badminton and Tournament Portal",
 };
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  await ensureUserLinks();
   return (
     <ClerkProvider>
       <html lang="en">

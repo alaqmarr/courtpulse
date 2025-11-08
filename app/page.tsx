@@ -92,11 +92,11 @@ export default async function DashboardPage() {
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground">
-  Current Plan: <span className="font-semibold">{dbUser.packageType}</span>
-  {dbUser.packageType === "PRO_PACKAGE" && (
-    <span className="ml-2 text-xs text-primary font-medium">(All features unlocked)</span>
-  )}
-</p>
+                Current Plan: <span className="font-semibold">{dbUser.packageType}</span>
+                {dbUser.packageType === "PRO_PACKAGE" && (
+                  <span className="ml-2 text-xs text-primary font-medium">(All features unlocked)</span>
+                )}
+              </p>
 
               <p className="text-xs text-muted-foreground">
                 Quota: {dbUser.teamQuota} teams · {dbUser.tournamentQuota} tournaments
