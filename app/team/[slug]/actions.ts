@@ -41,7 +41,7 @@ export async function addTeamMemberAction(
   await prisma.teamMember.create({
     data: {
       teamId: team.id,
-      email,
+      email : email.toLowerCase(),
       userId: user.id,
       role: "MEMBER",
       displayName: displayName ?? user.name ?? email.split("@")[0],

@@ -5,7 +5,6 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerTrigger, DrawerContent } from "@/components/ui/drawer";
-import importDynamic from "next/dynamic";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import WinRateChart from "@/components/WinRateChart";
 
@@ -17,22 +16,37 @@ export default async function DashboardPage() {
     where: { id: user.id },
     include: {
       teamsOwned: {
-        include: { members: true },
+        include: { members: { include: { user: true } } },
+      },
+      memberships: {
+        include: {
+          team: {
+            include: { members: { include: { user: true } } },
+          },
+        },
       },
       tournamentsOwned: true,
     },
   });
-
   if (!dbUser) redirect("/sign-up");
 
-  const teams = dbUser.teamsOwned || [];
+  // Merge owned + member teams (avoid duplicates)
+  const ownedTeams = dbUser.teamsOwned || [];
+  const memberTeams = dbUser.memberships.map((m) => m.team);
+  const allTeams = [
+    ...ownedTeams,
+    ...memberTeams.filter(
+      (t) => !ownedTeams.some((o) => o.id === t.id)
+    ),
+  ];
+
   const tournaments = dbUser.tournamentsOwned || [];
+
 
   return (
     <main className="min-h-screen bg-background text-foreground">
       <div className="max-w-7xl mx-auto p-8 space-y-10">
-        {/* ---------------- HEADER / HERO ---------------- */}
-        <section className="rounded-2xl p-6 bg-gradient-to-br from-primary/10 to-transparent border shadow-sm">
+        <section className="rounded-2xl p-6 bg-linear-to-br from-primary/10 to-transparent border shadow-sm">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <h1 className="text-3xl font-bold tracking-tight">
@@ -114,13 +128,13 @@ export default async function DashboardPage() {
             <DrawerContent className="p-6 space-y-6">
               <div>
                 <h2 className="font-semibold text-lg mb-2">Your Teams</h2>
-                {teams.length === 0 ? (
+                {allTeams.length === 0 ? (
                   <p className="text-sm text-muted-foreground">
                     No teams created yet.
                   </p>
                 ) : (
                   <div className="space-y-2">
-                    {teams.map((team) => (
+                    {allTeams.map((team) => (
                       <Link
                         key={team.id}
                         href={`/team/${team.slug}/stats`}
@@ -167,7 +181,7 @@ export default async function DashboardPage() {
         <section>
           <div className="flex justify-between items-center mb-3">
             <h2 className="text-2xl font-semibold">Your Teams</h2>
-            {teams.length > 0 && (
+            {allTeams.length > 0 && (
               <Link href="/create-team">
                 <Button size="sm" variant="outline">
                   + Add Team
@@ -176,7 +190,7 @@ export default async function DashboardPage() {
             )}
           </div>
 
-          {teams.length === 0 ? (
+          {allTeams.length === 0 ? (
             <div className="rounded-xl border p-8 text-center text-sm text-muted-foreground">
               You haven’t created any teams yet.{" "}
               <Link href="/create-team" className="underline">
@@ -186,7 +200,7 @@ export default async function DashboardPage() {
             </div>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {teams.map((team) => (
+              {allTeams.map((team) => (
                 <Card
                   key={team.id}
                   className="hover:shadow-lg transition border rounded-xl"
@@ -264,10 +278,8 @@ export default async function DashboardPage() {
         {/* ---------------- PERFORMANCE CHARTS ---------------- */}
         <section>
           <h2 className="text-2xl font-semibold mb-3">Performance Snapshot</h2>
-          <div className="rounded-xl border bg-card p-4">
-            <div className="h-[300px]">
-              <WinRateChart stats={teams.map((t) => ({ teamName: t.name, plays: 5, wins: 3 }))} />
-            </div>
+          <div className="h-[300px]">
+            <WinRateChart stats={allTeams.map((t) => ({ teamName: t.name, plays: 5, wins: 3 }))} />
           </div>
         </section>
       </div>
