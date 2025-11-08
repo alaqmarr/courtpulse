@@ -277,15 +277,6 @@ export default async function DashboardPage() {
         <section className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <Card>
             <CardHeader>
-              <CardTitle>Points</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{totalPoints}</p>
-              <p className="text-xs text-muted-foreground">Total accumulated</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
               <CardTitle>Wins</CardTitle>
             </CardHeader>
             <CardContent>
