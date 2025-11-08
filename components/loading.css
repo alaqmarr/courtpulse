@@ -8,7 +8,7 @@
 }
 
 .windows-loading-spinner > circle {
-  stroke: #fff;
+  stroke: #000;
   fill: none;
   stroke-width: 2px;
   stroke-linecap: round;
