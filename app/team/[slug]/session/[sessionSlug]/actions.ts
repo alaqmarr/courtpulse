@@ -5,6 +5,9 @@ import { getOrCreateUser } from "@/lib/clerk";
 import { revalidatePath } from "next/cache";
 import { generateSlug } from "@/lib/slug";
 
+/* ============================================================
+   CREATE GAME
+============================================================ */
 export async function createGameAction(
   teamSlug: string,
   sessionSlug: string,
@@ -22,6 +25,14 @@ export async function createGameAction(
   if (session.team.ownerId !== user.id)
     throw new Error("Only owner can create games.");
 
+  // Basic badminton logic validation
+  if (
+    (teamAPlayers.length === 1 && teamBPlayers.length !== 1) ||
+    (teamAPlayers.length === 2 && teamBPlayers.length !== 2)
+  ) {
+    throw new Error("Singles require 1 vs 1, doubles require 2 vs 2 players.");
+  }
+
   const slug = generateSlug(`${sessionSlug}-game`);
 
   await prisma.game.create({
@@ -36,8 +47,9 @@ export async function createGameAction(
   revalidatePath(`/team/${teamSlug}/session/${sessionSlug}`);
 }
 
-
-
+/* ============================================================
+   SET GAME WINNER + UPDATE PLAYER + PAIR STATS
+============================================================ */
 export async function setGameWinnerAction(
   teamSlug: string,
   sessionSlug: string,
@@ -49,29 +61,41 @@ export async function setGameWinnerAction(
 
   const game = await prisma.game.findUnique({
     where: { slug: gameSlug },
-    include: { session: { include: { team: { include: { members: true } } } } },
+    include: {
+      session: {
+        include: {
+          team: {
+            include: {
+              members: true,
+            },
+          },
+        },
+      },
+    },
   });
 
   if (!game) throw new Error("Game not found.");
   if (game.session.team.ownerId !== user.id)
     throw new Error("Only the team owner can mark winners.");
-
   if (game.winner) throw new Error("Winner already selected.");
 
-  // Determine winner/loser players
+  const team = game.session.team;
+  const teamId = team.id;
+
   const winningPlayers =
     winner === "A" ? game.teamAPlayers : game.teamBPlayers;
   const losingPlayers =
     winner === "A" ? game.teamBPlayers : game.teamAPlayers;
 
-  // Update game
-  await prisma.game.update({
-    where: { slug: gameSlug },
-    data: { winner },
-  });
-
-  // Update user stats in transaction
+  /* ---------------- Transaction ---------------- */
   await prisma.$transaction(async (tx) => {
+    // Mark game winner
+    await tx.game.update({
+      where: { slug: gameSlug },
+      data: { winner },
+    });
+
+    // Update player stats
     for (const email of winningPlayers) {
       const member = await tx.user.findUnique({ where: { email } });
       if (member) {
@@ -97,6 +121,37 @@ export async function setGameWinnerAction(
         });
       }
     }
+
+    // Update PairStat for both sides
+    const updatePair = async (players: string[], isWinner: boolean) => {
+      if (players.length < 2) return;
+
+      const [p1, p2] = players.sort();
+      const pair = await tx.pairStat.upsert({
+        where: {
+          teamId_playerA_playerB: {
+            teamId,
+            playerA: p1,
+            playerB: p2,
+          },
+        },
+        update: {
+          plays: { increment: 1 },
+          ...(isWinner ? { wins: { increment: 1 } } : {}),
+        },
+        create: {
+          teamId,
+          playerA: p1,
+          playerB: p2,
+          plays: 1,
+          wins: isWinner ? 1 : 0,
+        },
+      });
+      return pair;
+    };
+
+    await updatePair(winningPlayers, true);
+    await updatePair(losingPlayers, false);
   });
 
   revalidatePath(`/team/${teamSlug}/session/${sessionSlug}`);

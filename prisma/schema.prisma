@@ -62,17 +62,17 @@ enum ActivityType {
  */
 
 model User {
-  id        String   @id @default(cuid())
-  clerkId   String?  @unique
-  email     String   @unique
-  name      String?
-  image     String?
-  avatarUrl String?
+  id          String   @id @default(cuid())
+  clerkId     String?  @unique
+  email       String   @unique
+  name        String?
+  image       String?
+  avatarUrl   String?
   displayName String?
-  createdAt DateTime @default(now())
-  points    Int      @default(0)
-  wins      Int      @default(0)
-  losses    Int      @default(0)
+  createdAt   DateTime @default(now())
+  points      Int      @default(0)
+  wins        Int      @default(0)
+  losses      Int      @default(0)
 
   packageType     PackageType @default(FREE)
   teamQuota       Int         @default(0)
@@ -98,30 +98,31 @@ model User {
  */
 
 model Team {
-  id        String   @id @default(cuid())
-  name      String
-  slug      String   @unique
-  ownerId   String
-  createdAt DateTime @default(now())
+  id              String          @id @default(cuid())
+  name            String
+  slug            String          @unique
+  ownerId         String
+  createdAt       DateTime        @default(now())
 
-  owner           User             @relation("ownerTeams", fields: [ownerId], references: [id])
+  gamesPlayed     Int             @default(0)
+  gamesWon        Int             @default(0)
+
+  owner           User            @relation("ownerTeams", fields: [ownerId], references: [id])
   members         TeamMember[]
   sessions        Session[]
   pairStats       PairStat[]
   tournamentTeams TournamentTeam[]
   calendarEvents  CalendarEvent[]
-
-  @@index([ownerId])
 }
 
 model TeamMember {
-  id       String   @id @default(cuid())
-  teamId   String
-  userId   String?
+  id          String   @id @default(cuid())
+  teamId      String
+  userId      String?
   displayName String?
-  email    String
-  role     Role     @default(MEMBER)
-  joinedAt DateTime @default(now())
+  email       String
+  role        Role     @default(MEMBER)
+  joinedAt    DateTime @default(now())
 
   team Team  @relation(fields: [teamId], references: [id])
   user User? @relation(fields: [userId], references: [id])

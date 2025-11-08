@@ -104,14 +104,15 @@ model Team {
   ownerId   String
   createdAt DateTime @default(now())
 
+  gamesPlayed Int @default(0)
+  gamesWon    Int @default(0)
+
   owner           User             @relation("ownerTeams", fields: [ownerId], references: [id])
   members         TeamMember[]
   sessions        Session[]
   pairStats       PairStat[]
   tournamentTeams TournamentTeam[]
   calendarEvents  CalendarEvent[]
-
-  @@index([ownerId])
 }
 
 model TeamMember {

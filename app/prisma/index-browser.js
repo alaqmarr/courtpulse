@@ -146,7 +146,9 @@ exports.Prisma.TeamScalarFieldEnum = {
   name: 'name',
   slug: 'slug',
   ownerId: 'ownerId',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  gamesPlayed: 'gamesPlayed',
+  gamesWon: 'gamesWon'
 };
 
 exports.Prisma.TeamMemberScalarFieldEnum = {

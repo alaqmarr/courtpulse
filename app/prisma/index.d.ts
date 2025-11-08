@@ -3864,8 +3864,20 @@ export namespace Prisma {
 
   export type AggregateTeam = {
     _count: TeamCountAggregateOutputType | null
+    _avg: TeamAvgAggregateOutputType | null
+    _sum: TeamSumAggregateOutputType | null
     _min: TeamMinAggregateOutputType | null
     _max: TeamMaxAggregateOutputType | null
+  }
+
+  export type TeamAvgAggregateOutputType = {
+    gamesPlayed: number | null
+    gamesWon: number | null
+  }
+
+  export type TeamSumAggregateOutputType = {
+    gamesPlayed: number | null
+    gamesWon: number | null
   }
 
   export type TeamMinAggregateOutputType = {
@@ -3874,6 +3886,8 @@ export namespace Prisma {
     slug: string | null
     ownerId: string | null
     createdAt: Date | null
+    gamesPlayed: number | null
+    gamesWon: number | null
   }
 
   export type TeamMaxAggregateOutputType = {
@@ -3882,6 +3896,8 @@ export namespace Prisma {
     slug: string | null
     ownerId: string | null
     createdAt: Date | null
+    gamesPlayed: number | null
+    gamesWon: number | null
   }
 
   export type TeamCountAggregateOutputType = {
@@ -3890,9 +3906,21 @@ export namespace Prisma {
     slug: number
     ownerId: number
     createdAt: number
+    gamesPlayed: number
+    gamesWon: number
     _all: number
   }
 
+
+  export type TeamAvgAggregateInputType = {
+    gamesPlayed?: true
+    gamesWon?: true
+  }
+
+  export type TeamSumAggregateInputType = {
+    gamesPlayed?: true
+    gamesWon?: true
+  }
 
   export type TeamMinAggregateInputType = {
     id?: true
@@ -3900,6 +3928,8 @@ export namespace Prisma {
     slug?: true
     ownerId?: true
     createdAt?: true
+    gamesPlayed?: true
+    gamesWon?: true
   }
 
   export type TeamMaxAggregateInputType = {
@@ -3908,6 +3938,8 @@ export namespace Prisma {
     slug?: true
     ownerId?: true
     createdAt?: true
+    gamesPlayed?: true
+    gamesWon?: true
   }
 
   export type TeamCountAggregateInputType = {
@@ -3916,6 +3948,8 @@ export namespace Prisma {
     slug?: true
     ownerId?: true
     createdAt?: true
+    gamesPlayed?: true
+    gamesWon?: true
     _all?: true
   }
 
@@ -3957,6 +3991,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: TeamAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TeamSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: TeamMinAggregateInputType
@@ -3987,6 +4033,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: TeamCountAggregateInputType | true
+    _avg?: TeamAvgAggregateInputType
+    _sum?: TeamSumAggregateInputType
     _min?: TeamMinAggregateInputType
     _max?: TeamMaxAggregateInputType
   }
@@ -3997,7 +4045,11 @@ export namespace Prisma {
     slug: string
     ownerId: string
     createdAt: Date
+    gamesPlayed: number
+    gamesWon: number
     _count: TeamCountAggregateOutputType | null
+    _avg: TeamAvgAggregateOutputType | null
+    _sum: TeamSumAggregateOutputType | null
     _min: TeamMinAggregateOutputType | null
     _max: TeamMaxAggregateOutputType | null
   }
@@ -4022,6 +4074,8 @@ export namespace Prisma {
     slug?: boolean
     ownerId?: boolean
     createdAt?: boolean
+    gamesPlayed?: boolean
+    gamesWon?: boolean
     owner?: boolean | UserDefaultArgs<ExtArgs>
     members?: boolean | Team$membersArgs<ExtArgs>
     sessions?: boolean | Team$sessionsArgs<ExtArgs>
@@ -4037,6 +4091,8 @@ export namespace Prisma {
     slug?: boolean
     ownerId?: boolean
     createdAt?: boolean
+    gamesPlayed?: boolean
+    gamesWon?: boolean
     owner?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["team"]>
 
@@ -4046,6 +4102,8 @@ export namespace Prisma {
     slug?: boolean
     ownerId?: boolean
     createdAt?: boolean
+    gamesPlayed?: boolean
+    gamesWon?: boolean
     owner?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["team"]>
 
@@ -4055,9 +4113,11 @@ export namespace Prisma {
     slug?: boolean
     ownerId?: boolean
     createdAt?: boolean
+    gamesPlayed?: boolean
+    gamesWon?: boolean
   }
 
-  export type TeamOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "ownerId" | "createdAt", ExtArgs["result"]["team"]>
+  export type TeamOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "ownerId" | "createdAt" | "gamesPlayed" | "gamesWon", ExtArgs["result"]["team"]>
   export type TeamInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     owner?: boolean | UserDefaultArgs<ExtArgs>
     members?: boolean | Team$membersArgs<ExtArgs>
@@ -4090,6 +4150,8 @@ export namespace Prisma {
       slug: string
       ownerId: string
       createdAt: Date
+      gamesPlayed: number
+      gamesWon: number
     }, ExtArgs["result"]["team"]>
     composites: {}
   }
@@ -4524,6 +4586,8 @@ export namespace Prisma {
     readonly slug: FieldRef<"Team", 'String'>
     readonly ownerId: FieldRef<"Team", 'String'>
     readonly createdAt: FieldRef<"Team", 'DateTime'>
+    readonly gamesPlayed: FieldRef<"Team", 'Int'>
+    readonly gamesWon: FieldRef<"Team", 'Int'>
   }
     
 
@@ -18575,7 +18639,9 @@ export namespace Prisma {
     name: 'name',
     slug: 'slug',
     ownerId: 'ownerId',
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    gamesPlayed: 'gamesPlayed',
+    gamesWon: 'gamesWon'
   };
 
   export type TeamScalarFieldEnum = (typeof TeamScalarFieldEnum)[keyof typeof TeamScalarFieldEnum]
@@ -19056,6 +19122,8 @@ export namespace Prisma {
     slug?: StringFilter<"Team"> | string
     ownerId?: StringFilter<"Team"> | string
     createdAt?: DateTimeFilter<"Team"> | Date | string
+    gamesPlayed?: IntFilter<"Team"> | number
+    gamesWon?: IntFilter<"Team"> | number
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
     members?: TeamMemberListRelationFilter
     sessions?: SessionListRelationFilter
@@ -19070,6 +19138,8 @@ export namespace Prisma {
     slug?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
+    gamesPlayed?: SortOrder
+    gamesWon?: SortOrder
     owner?: UserOrderByWithRelationInput
     members?: TeamMemberOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
@@ -19087,6 +19157,8 @@ export namespace Prisma {
     name?: StringFilter<"Team"> | string
     ownerId?: StringFilter<"Team"> | string
     createdAt?: DateTimeFilter<"Team"> | Date | string
+    gamesPlayed?: IntFilter<"Team"> | number
+    gamesWon?: IntFilter<"Team"> | number
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
     members?: TeamMemberListRelationFilter
     sessions?: SessionListRelationFilter
@@ -19101,9 +19173,13 @@ export namespace Prisma {
     slug?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
+    gamesPlayed?: SortOrder
+    gamesWon?: SortOrder
     _count?: TeamCountOrderByAggregateInput
+    _avg?: TeamAvgOrderByAggregateInput
     _max?: TeamMaxOrderByAggregateInput
     _min?: TeamMinOrderByAggregateInput
+    _sum?: TeamSumOrderByAggregateInput
   }
 
   export type TeamScalarWhereWithAggregatesInput = {
@@ -19115,6 +19191,8 @@ export namespace Prisma {
     slug?: StringWithAggregatesFilter<"Team"> | string
     ownerId?: StringWithAggregatesFilter<"Team"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Team"> | Date | string
+    gamesPlayed?: IntWithAggregatesFilter<"Team"> | number
+    gamesWon?: IntWithAggregatesFilter<"Team"> | number
   }
 
   export type TeamMemberWhereInput = {
@@ -20113,6 +20191,8 @@ export namespace Prisma {
     name: string
     slug: string
     createdAt?: Date | string
+    gamesPlayed?: number
+    gamesWon?: number
     owner: UserCreateNestedOneWithoutTeamsOwnedInput
     members?: TeamMemberCreateNestedManyWithoutTeamInput
     sessions?: SessionCreateNestedManyWithoutTeamInput
@@ -20127,6 +20207,8 @@ export namespace Prisma {
     slug: string
     ownerId: string
     createdAt?: Date | string
+    gamesPlayed?: number
+    gamesWon?: number
     members?: TeamMemberUncheckedCreateNestedManyWithoutTeamInput
     sessions?: SessionUncheckedCreateNestedManyWithoutTeamInput
     pairStats?: PairStatUncheckedCreateNestedManyWithoutTeamInput
@@ -20139,6 +20221,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    gamesPlayed?: IntFieldUpdateOperationsInput | number
+    gamesWon?: IntFieldUpdateOperationsInput | number
     owner?: UserUpdateOneRequiredWithoutTeamsOwnedNestedInput
     members?: TeamMemberUpdateManyWithoutTeamNestedInput
     sessions?: SessionUpdateManyWithoutTeamNestedInput
@@ -20153,6 +20237,8 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    gamesPlayed?: IntFieldUpdateOperationsInput | number
+    gamesWon?: IntFieldUpdateOperationsInput | number
     members?: TeamMemberUncheckedUpdateManyWithoutTeamNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutTeamNestedInput
     pairStats?: PairStatUncheckedUpdateManyWithoutTeamNestedInput
@@ -20166,6 +20252,8 @@ export namespace Prisma {
     slug: string
     ownerId: string
     createdAt?: Date | string
+    gamesPlayed?: number
+    gamesWon?: number
   }
 
   export type TeamUpdateManyMutationInput = {
@@ -20173,6 +20261,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    gamesPlayed?: IntFieldUpdateOperationsInput | number
+    gamesWon?: IntFieldUpdateOperationsInput | number
   }
 
   export type TeamUncheckedUpdateManyInput = {
@@ -20181,6 +20271,8 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    gamesPlayed?: IntFieldUpdateOperationsInput | number
+    gamesWon?: IntFieldUpdateOperationsInput | number
   }
 
   export type TeamMemberCreateInput = {
@@ -21386,6 +21478,13 @@ export namespace Prisma {
     slug?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
+    gamesPlayed?: SortOrder
+    gamesWon?: SortOrder
+  }
+
+  export type TeamAvgOrderByAggregateInput = {
+    gamesPlayed?: SortOrder
+    gamesWon?: SortOrder
   }
 
   export type TeamMaxOrderByAggregateInput = {
@@ -21394,6 +21493,8 @@ export namespace Prisma {
     slug?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
+    gamesPlayed?: SortOrder
+    gamesWon?: SortOrder
   }
 
   export type TeamMinOrderByAggregateInput = {
@@ -21402,6 +21503,13 @@ export namespace Prisma {
     slug?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
+    gamesPlayed?: SortOrder
+    gamesWon?: SortOrder
+  }
+
+  export type TeamSumOrderByAggregateInput = {
+    gamesPlayed?: SortOrder
+    gamesWon?: SortOrder
   }
 
   export type EnumRoleFilter<$PrismaModel = never> = {
@@ -23439,6 +23547,8 @@ export namespace Prisma {
     name: string
     slug: string
     createdAt?: Date | string
+    gamesPlayed?: number
+    gamesWon?: number
     members?: TeamMemberCreateNestedManyWithoutTeamInput
     sessions?: SessionCreateNestedManyWithoutTeamInput
     pairStats?: PairStatCreateNestedManyWithoutTeamInput
@@ -23451,6 +23561,8 @@ export namespace Prisma {
     name: string
     slug: string
     createdAt?: Date | string
+    gamesPlayed?: number
+    gamesWon?: number
     members?: TeamMemberUncheckedCreateNestedManyWithoutTeamInput
     sessions?: SessionUncheckedCreateNestedManyWithoutTeamInput
     pairStats?: PairStatUncheckedCreateNestedManyWithoutTeamInput
@@ -23641,6 +23753,8 @@ export namespace Prisma {
     slug?: StringFilter<"Team"> | string
     ownerId?: StringFilter<"Team"> | string
     createdAt?: DateTimeFilter<"Team"> | Date | string
+    gamesPlayed?: IntFilter<"Team"> | number
+    gamesWon?: IntFilter<"Team"> | number
   }
 
   export type TournamentUpsertWithWhereUniqueWithoutOwnerInput = {
@@ -24178,6 +24292,8 @@ export namespace Prisma {
     name: string
     slug: string
     createdAt?: Date | string
+    gamesPlayed?: number
+    gamesWon?: number
     owner: UserCreateNestedOneWithoutTeamsOwnedInput
     sessions?: SessionCreateNestedManyWithoutTeamInput
     pairStats?: PairStatCreateNestedManyWithoutTeamInput
@@ -24191,6 +24307,8 @@ export namespace Prisma {
     slug: string
     ownerId: string
     createdAt?: Date | string
+    gamesPlayed?: number
+    gamesWon?: number
     sessions?: SessionUncheckedCreateNestedManyWithoutTeamInput
     pairStats?: PairStatUncheckedCreateNestedManyWithoutTeamInput
     tournamentTeams?: TournamentTeamUncheckedCreateNestedManyWithoutTeamInput
@@ -24273,6 +24391,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    gamesPlayed?: IntFieldUpdateOperationsInput | number
+    gamesWon?: IntFieldUpdateOperationsInput | number
     owner?: UserUpdateOneRequiredWithoutTeamsOwnedNestedInput
     sessions?: SessionUpdateManyWithoutTeamNestedInput
     pairStats?: PairStatUpdateManyWithoutTeamNestedInput
@@ -24286,6 +24406,8 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    gamesPlayed?: IntFieldUpdateOperationsInput | number
+    gamesWon?: IntFieldUpdateOperationsInput | number
     sessions?: SessionUncheckedUpdateManyWithoutTeamNestedInput
     pairStats?: PairStatUncheckedUpdateManyWithoutTeamNestedInput
     tournamentTeams?: TournamentTeamUncheckedUpdateManyWithoutTeamNestedInput
@@ -24358,6 +24480,8 @@ export namespace Prisma {
     name: string
     slug: string
     createdAt?: Date | string
+    gamesPlayed?: number
+    gamesWon?: number
     owner: UserCreateNestedOneWithoutTeamsOwnedInput
     members?: TeamMemberCreateNestedManyWithoutTeamInput
     pairStats?: PairStatCreateNestedManyWithoutTeamInput
@@ -24371,6 +24495,8 @@ export namespace Prisma {
     slug: string
     ownerId: string
     createdAt?: Date | string
+    gamesPlayed?: number
+    gamesWon?: number
     members?: TeamMemberUncheckedCreateNestedManyWithoutTeamInput
     pairStats?: PairStatUncheckedCreateNestedManyWithoutTeamInput
     tournamentTeams?: TournamentTeamUncheckedCreateNestedManyWithoutTeamInput
@@ -24426,6 +24552,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    gamesPlayed?: IntFieldUpdateOperationsInput | number
+    gamesWon?: IntFieldUpdateOperationsInput | number
     owner?: UserUpdateOneRequiredWithoutTeamsOwnedNestedInput
     members?: TeamMemberUpdateManyWithoutTeamNestedInput
     pairStats?: PairStatUpdateManyWithoutTeamNestedInput
@@ -24439,6 +24567,8 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    gamesPlayed?: IntFieldUpdateOperationsInput | number
+    gamesWon?: IntFieldUpdateOperationsInput | number
     members?: TeamMemberUncheckedUpdateManyWithoutTeamNestedInput
     pairStats?: PairStatUncheckedUpdateManyWithoutTeamNestedInput
     tournamentTeams?: TournamentTeamUncheckedUpdateManyWithoutTeamNestedInput
@@ -24531,6 +24661,8 @@ export namespace Prisma {
     name: string
     slug: string
     createdAt?: Date | string
+    gamesPlayed?: number
+    gamesWon?: number
     owner: UserCreateNestedOneWithoutTeamsOwnedInput
     members?: TeamMemberCreateNestedManyWithoutTeamInput
     sessions?: SessionCreateNestedManyWithoutTeamInput
@@ -24544,6 +24676,8 @@ export namespace Prisma {
     slug: string
     ownerId: string
     createdAt?: Date | string
+    gamesPlayed?: number
+    gamesWon?: number
     members?: TeamMemberUncheckedCreateNestedManyWithoutTeamInput
     sessions?: SessionUncheckedCreateNestedManyWithoutTeamInput
     tournamentTeams?: TournamentTeamUncheckedCreateNestedManyWithoutTeamInput
@@ -24571,6 +24705,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    gamesPlayed?: IntFieldUpdateOperationsInput | number
+    gamesWon?: IntFieldUpdateOperationsInput | number
     owner?: UserUpdateOneRequiredWithoutTeamsOwnedNestedInput
     members?: TeamMemberUpdateManyWithoutTeamNestedInput
     sessions?: SessionUpdateManyWithoutTeamNestedInput
@@ -24584,6 +24720,8 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    gamesPlayed?: IntFieldUpdateOperationsInput | number
+    gamesWon?: IntFieldUpdateOperationsInput | number
     members?: TeamMemberUncheckedUpdateManyWithoutTeamNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutTeamNestedInput
     tournamentTeams?: TournamentTeamUncheckedUpdateManyWithoutTeamNestedInput
@@ -24956,6 +25094,8 @@ export namespace Prisma {
     name: string
     slug: string
     createdAt?: Date | string
+    gamesPlayed?: number
+    gamesWon?: number
     owner: UserCreateNestedOneWithoutTeamsOwnedInput
     members?: TeamMemberCreateNestedManyWithoutTeamInput
     sessions?: SessionCreateNestedManyWithoutTeamInput
@@ -24969,6 +25109,8 @@ export namespace Prisma {
     slug: string
     ownerId: string
     createdAt?: Date | string
+    gamesPlayed?: number
+    gamesWon?: number
     members?: TeamMemberUncheckedCreateNestedManyWithoutTeamInput
     sessions?: SessionUncheckedCreateNestedManyWithoutTeamInput
     pairStats?: PairStatUncheckedCreateNestedManyWithoutTeamInput
@@ -25107,6 +25249,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    gamesPlayed?: IntFieldUpdateOperationsInput | number
+    gamesWon?: IntFieldUpdateOperationsInput | number
     owner?: UserUpdateOneRequiredWithoutTeamsOwnedNestedInput
     members?: TeamMemberUpdateManyWithoutTeamNestedInput
     sessions?: SessionUpdateManyWithoutTeamNestedInput
@@ -25120,6 +25264,8 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    gamesPlayed?: IntFieldUpdateOperationsInput | number
+    gamesWon?: IntFieldUpdateOperationsInput | number
     members?: TeamMemberUncheckedUpdateManyWithoutTeamNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutTeamNestedInput
     pairStats?: PairStatUncheckedUpdateManyWithoutTeamNestedInput
@@ -25884,6 +26030,8 @@ export namespace Prisma {
     name: string
     slug: string
     createdAt?: Date | string
+    gamesPlayed?: number
+    gamesWon?: number
     owner: UserCreateNestedOneWithoutTeamsOwnedInput
     members?: TeamMemberCreateNestedManyWithoutTeamInput
     sessions?: SessionCreateNestedManyWithoutTeamInput
@@ -25897,6 +26045,8 @@ export namespace Prisma {
     slug: string
     ownerId: string
     createdAt?: Date | string
+    gamesPlayed?: number
+    gamesWon?: number
     members?: TeamMemberUncheckedCreateNestedManyWithoutTeamInput
     sessions?: SessionUncheckedCreateNestedManyWithoutTeamInput
     pairStats?: PairStatUncheckedCreateNestedManyWithoutTeamInput
@@ -25963,6 +26113,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    gamesPlayed?: IntFieldUpdateOperationsInput | number
+    gamesWon?: IntFieldUpdateOperationsInput | number
     owner?: UserUpdateOneRequiredWithoutTeamsOwnedNestedInput
     members?: TeamMemberUpdateManyWithoutTeamNestedInput
     sessions?: SessionUpdateManyWithoutTeamNestedInput
@@ -25976,6 +26128,8 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    gamesPlayed?: IntFieldUpdateOperationsInput | number
+    gamesWon?: IntFieldUpdateOperationsInput | number
     members?: TeamMemberUncheckedUpdateManyWithoutTeamNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutTeamNestedInput
     pairStats?: PairStatUncheckedUpdateManyWithoutTeamNestedInput
@@ -25987,6 +26141,8 @@ export namespace Prisma {
     name: string
     slug: string
     createdAt?: Date | string
+    gamesPlayed?: number
+    gamesWon?: number
   }
 
   export type TournamentCreateManyOwnerInput = {
@@ -26039,6 +26195,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    gamesPlayed?: IntFieldUpdateOperationsInput | number
+    gamesWon?: IntFieldUpdateOperationsInput | number
     members?: TeamMemberUpdateManyWithoutTeamNestedInput
     sessions?: SessionUpdateManyWithoutTeamNestedInput
     pairStats?: PairStatUpdateManyWithoutTeamNestedInput
@@ -26051,6 +26209,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    gamesPlayed?: IntFieldUpdateOperationsInput | number
+    gamesWon?: IntFieldUpdateOperationsInput | number
     members?: TeamMemberUncheckedUpdateManyWithoutTeamNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutTeamNestedInput
     pairStats?: PairStatUncheckedUpdateManyWithoutTeamNestedInput
@@ -26063,6 +26223,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    gamesPlayed?: IntFieldUpdateOperationsInput | number
+    gamesWon?: IntFieldUpdateOperationsInput | number
   }
 
   export type TournamentUpdateWithoutOwnerInput = {

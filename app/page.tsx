@@ -1,12 +1,14 @@
-// app/page.tsx
 import { getOrCreateUser } from "@/lib/clerk";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Drawer, DrawerTrigger, DrawerContent } from "@/components/ui/drawer";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import WinRateChart from "@/components/WinRateChart";
+
+export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const user = await getOrCreateUser();
@@ -18,9 +20,7 @@ export default async function DashboardPage() {
       teamsOwned: {
         include: {
           members: true,
-          tournamentTeams: {
-            include: { tournament: true },
-          },
+          tournamentTeams: { include: { tournament: true } },
         },
       },
       memberships: {
@@ -28,9 +28,7 @@ export default async function DashboardPage() {
           team: {
             include: {
               members: true,
-              tournamentTeams: {
-                include: { tournament: true },
-              },
+              tournamentTeams: { include: { tournament: true } },
             },
           },
         },
@@ -41,8 +39,6 @@ export default async function DashboardPage() {
 
   if (!dbUser) redirect("/sign-up");
 
-
-  // Teams (owned + member)
   const ownedTeams = dbUser.teamsOwned || [];
   const memberTeams = dbUser.memberships.map((m) => m.team);
   const allTeams = [
@@ -50,20 +46,15 @@ export default async function DashboardPage() {
     ...memberTeams.filter((t) => !ownedTeams.some((o) => o.id === t.id)),
   ];
 
-  // Tournaments (owned + participated)
   const hostedTournaments = dbUser.tournamentsOwned || [];
-
   const participatedTournaments = [
     ...new Map(
       allTeams
-        .flatMap((t) =>
-          t.tournamentTeams.map((tt) => tt.tournament)
-        )
-        .filter((t) => t != null)
-        .map((t) => [t.id, t]) // deduplicate
+        .flatMap((t) => t.tournamentTeams.map((tt) => tt.tournament))
+        .filter(Boolean)
+        .map((t) => [t.id, t])
     ).values(),
   ];
-
   const allTournaments = [
     ...hostedTournaments,
     ...participatedTournaments.filter(
@@ -71,20 +62,29 @@ export default async function DashboardPage() {
     ),
   ];
 
+  const totalGamesPlayed =
+    dbUser.wins + dbUser.losses || 0;
+  const winRate =
+    totalGamesPlayed > 0
+      ? ((dbUser.wins / totalGamesPlayed) * 100).toFixed(1)
+      : "0";
 
+  const hasTeams = allTeams.length > 0;
+  const hasTournaments = allTournaments.length > 0;
 
   return (
     <main className="min-h-screen bg-background text-foreground">
       <div className="max-w-7xl mx-auto p-8 space-y-10">
-        <section className="rounded-2xl p-6 bg-linear-to-br from-primary/10 to-transparent border shadow-sm">
+        {/* ---------------- HEADER ---------------- */}
+        <section className="rounded-2xl border bg-gradient-to-br from-primary/5 to-transparent p-6 shadow-sm">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <h1 className="text-3xl font-bold tracking-tight">
                 Welcome back, {dbUser.name?.split(" ")[0] ?? dbUser.email}
               </h1>
               <p className="text-sm text-muted-foreground mt-1">
-                Manage your teams, track performance, and view public
-                statistics. Your analytics are always free.
+                Track your progress, manage your teams, and stay ahead of every
+                game.
               </p>
             </div>
 
@@ -102,24 +102,64 @@ export default async function DashboardPage() {
           </div>
         </section>
 
-        {/* ---------------- METRICS OVERVIEW ---------------- */}
+        {/* ---------------- USER STATS ---------------- */}
+        <section className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Points</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">{dbUser.points}</p>
+              <p className="text-xs text-muted-foreground">Total accumulated</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Wins</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">{dbUser.wins}</p>
+              <p className="text-xs text-muted-foreground">Games won</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Losses</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">{dbUser.losses}</p>
+              <p className="text-xs text-muted-foreground">Games lost</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Win Rate</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">{winRate}%</p>
+              <p className="text-xs text-muted-foreground">Overall ratio</p>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* ---------------- PLAN INFO ---------------- */}
         <section className="grid grid-cols-1 sm:grid-cols-3 gap-5">
           <Card>
             <CardHeader>
-              <h3 className="font-semibold">Teams</h3>
+              <CardTitle>Teams</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold">{dbUser.teamCount}</p>
               <p className="text-xs text-muted-foreground">
                 {dbUser.teamCount > 0
-                  ? `${dbUser.teamCount} active teams`
+                  ? `${dbUser.teamCount} active`
                   : "No teams yet"}
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader>
-              <h3 className="font-semibold">Tournaments</h3>
+              <CardTitle>Tournaments</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold">{dbUser.tournamentCount}</p>
@@ -132,103 +172,89 @@ export default async function DashboardPage() {
           </Card>
           <Card>
             <CardHeader>
-              <h3 className="font-semibold">Current Plan</h3>
+              <CardTitle>Subscription</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground">
-                Current Plan: <span className="font-semibold">{dbUser.packageType}</span>
-                {dbUser.packageType === "PRO_PACKAGE" && (
-                  <span className="ml-2 text-xs text-primary font-medium">(All features unlocked)</span>
-                )}
+                <span className="font-semibold">{dbUser.packageType}</span>{" "}
+                plan
               </p>
-
               <p className="text-xs text-muted-foreground">
-                Quota: {dbUser.teamQuota} teams · {dbUser.tournamentQuota} tournaments
+                {dbUser.teamQuota} teams · {dbUser.tournamentQuota} tournaments
               </p>
             </CardContent>
           </Card>
         </section>
 
-        {/* ---------------- TEAM + TOURNAMENT DRAWER ---------------- */}
-        <section>
-          <Drawer>
-            <DrawerTrigger asChild>
-              <Button variant="secondary">Quick Switch</Button>
-            </DrawerTrigger>
-            <DrawerContent className="p-6 space-y-6">
-              <div>
-                <h2 className="font-semibold text-lg mb-2">Your Teams</h2>
-                {allTeams.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">
-                    No teams created yet.
-                  </p>
-                ) : (
-                  <div className="space-y-2">
-                    {allTeams.map((team) => (
-                      <Link
-                        key={team.id}
-                        href={`/team/${team.slug}/stats`}
-                        className="block border rounded-md p-3 hover:bg-muted transition"
-                      >
-                        <div className="font-medium">{team.name}</div>
-                        <div className="text-xs text-muted-foreground">
-                          {team.members.length} members
-                        </div>
-                      </Link>
-                    ))}
+        {/* ---------------- QUICK SWITCH ---------------- */}
+        {(hasTeams || hasTournaments) && (
+          <section>
+            <Drawer>
+              <DrawerTrigger asChild>
+                <Button variant="secondary">Quick Switch</Button>
+              </DrawerTrigger>
+              <DrawerContent className="p-6 space-y-6">
+                {hasTeams && (
+                  <div>
+                    <h2 className="font-semibold text-lg mb-2">Your Teams</h2>
+                    <div className="space-y-2">
+                      {allTeams.map((team) => (
+                        <Link
+                          key={team.id}
+                          href={`/team/${team.slug}/stats`}
+                          className="block border rounded-md p-3 hover:bg-muted transition"
+                        >
+                          <div className="font-medium">{team.name}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {team.members.length} members
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 )}
-              </div>
 
-              <div>
-                <h2 className="font-semibold text-lg mb-2">Your Tournaments</h2>
-                {allTournaments.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">
-                    No tournaments hosted yet.
-                  </p>
-                ) : (
-                  <div className="space-y-2">
-                    {allTournaments.map((t) => (
-                      <Link
-                        key={t.id}
-                        href={`/tournament/${t.slug}`}
-                        className="block border rounded-md p-3 hover:bg-muted transition"
-                      >
-                        <div className="font-medium">{t.name}</div>
-                        <div className="text-xs text-muted-foreground">
-                          Created {t.createdAt.toLocaleDateString()}
-                        </div>
-                      </Link>
-                    ))}
+                {hasTournaments && (
+                  <div>
+                    <h2 className="font-semibold text-lg mb-2">
+                      Your Tournaments
+                    </h2>
+                    <div className="space-y-2">
+                      {allTournaments.map((t) => (
+                        <Link
+                          key={t.id}
+                          href={`/tournament/${t.slug}`}
+                          className="block border rounded-md p-3 hover:bg-muted transition"
+                        >
+                          <div className="font-medium">{t.name}</div>
+                          <div className="text-xs text-muted-foreground">
+                            Created {t.createdAt.toLocaleDateString()}
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 )}
-              </div>
-            </DrawerContent>
-          </Drawer>
-        </section>
+              </DrawerContent>
+            </Drawer>
+          </section>
+        )}
 
-        {/* ---------------- TEAMS GRID ---------------- */}
-        <section>
-          <div className="flex justify-between items-center mb-3">
-            <h2 className="text-2xl font-semibold">Your Teams</h2>
-            {allTeams.length > 0 && (
-              <Link href="/create-team">
-                <Button size="sm" variant="outline">
-                  + Add Team
-                </Button>
-              </Link>
-            )}
-          </div>
+        {/* ---------------- EMPTY STATES ---------------- */}
+        {!hasTeams && !hasTournaments && (
+          <Alert>
+            <AlertTitle>No activity yet</AlertTitle>
+            <AlertDescription>
+              You haven’t joined or created any team or tournament. Create one
+              now to start tracking stats and leaderboards.
+            </AlertDescription>
+          </Alert>
+        )}
 
-          {allTeams.length === 0 ? (
-            <div className="rounded-xl border p-8 text-center text-sm text-muted-foreground">
-              You haven’t created any teams yet.{" "}
-              <Link href="/create-team" className="underline">
-                Create one
-              </Link>
-              .
-            </div>
-          ) : (
+        {/* ---------------- TEAM CARDS ---------------- */}
+        {hasTeams && (
+          <section>
+            <h2 className="text-2xl font-semibold mb-3">Your Teams</h2>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {allTeams.map((team) => (
                 <Card
@@ -253,31 +279,13 @@ export default async function DashboardPage() {
                 </Card>
               ))}
             </div>
-          )}
-        </section>
+          </section>
+        )}
 
-        {/* ---------------- TOURNAMENTS GRID ---------------- */}
-        <section>
-          <div className="flex justify-between items-center mb-3">
-            <h2 className="text-2xl font-semibold">Your Tournaments</h2>
-            {allTournaments.length > 0 && (
-              <Link href="/create-tournament">
-                <Button size="sm" variant="outline">
-                  + Add Tournament
-                </Button>
-              </Link>
-            )}
-          </div>
-
-          {allTournaments.length === 0 ? (
-            <div className="rounded-xl border p-8 text-center text-sm text-muted-foreground">
-              You haven’t hosted or joined any tournaments yet.{" "}
-              <Link href="/create-tournament" className="underline">
-                Create one
-              </Link>
-              .
-            </div>
-          ) : (
+        {/* ---------------- TOURNAMENTS ---------------- */}
+        {hasTournaments && (
+          <section>
+            <h2 className="text-2xl font-semibold mb-3">Your Tournaments</h2>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {allTournaments.map((t) => (
                 <Card
@@ -302,17 +310,28 @@ export default async function DashboardPage() {
                 </Card>
               ))}
             </div>
-          )}
-        </section>
+          </section>
+        )}
 
-
-        {/* ---------------- PERFORMANCE CHARTS ---------------- */}
-        <section>
-          <h2 className="text-2xl font-semibold mb-3">Performance Snapshot</h2>
-          <div className="h-[300px]">
-            <WinRateChart stats={allTeams.map((t) => ({ teamName: t.name, plays: 5, wins: 3 }))} />
-          </div>
-        </section>
+        {/* ---------------- PERFORMANCE CHART ---------------- */}
+        {(dbUser.wins > 0 || dbUser.losses > 0) && (
+          <section>
+            <h2 className="text-2xl font-semibold mb-3">
+              Performance Snapshot
+            </h2>
+            <div className="rounded-xl border bg-card p-4">
+              <div className="h-[300px]">
+                <WinRateChart
+                  stats={allTeams.map((t) => ({
+                    teamName: t.name,
+                    plays: t.gamesPlayed || 5,
+                    wins: t.gamesWon || 3,
+                  }))}
+                />
+              </div>
+            </div>
+          </section>
+        )}
       </div>
     </main>
   );

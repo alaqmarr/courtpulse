@@ -15,7 +15,8 @@ import { prisma } from "@/lib/prisma";
 export async function GET() {
   try {
     const user = await currentUser();
-    if (!user) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    if (!user)
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
     // Step 1: Ensure schema is applied
     try {
@@ -26,7 +27,8 @@ export async function GET() {
 
     // Step 2: Create user if missing
     const email = user.emailAddresses?.[0]?.emailAddress?.toLowerCase();
-    if (!email) return NextResponse.json({ error: "No email found" }, { status: 400 });
+    if (!email)
+      return NextResponse.json({ error: "No email found" }, { status: 400 });
 
     let dbUser = await prisma.user.findUnique({ where: { email } });
 
