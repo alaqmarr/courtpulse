@@ -31,11 +31,17 @@ export async function addTeamMemberAction(
 
   // Ensure User exists (or create placeholder)
   let user = await prisma.user.findUnique({ where: { email } });
-  if (!user) {
-    user = await prisma.user.create({
-      data: { email, name: displayName ?? undefined },
-    });
-  }
+if (!user) {
+  user = await prisma.user.create({
+    data: {
+      email: email.toLowerCase(),
+      name: displayName ?? undefined,
+      packageType: "FREE",
+      teamQuota: 0,
+      tournamentQuota: 0,
+    },
+  });
+}
 
   // Create the member with displayName
   await prisma.teamMember.create({

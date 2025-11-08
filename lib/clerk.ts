@@ -1,105 +1,81 @@
+// lib/clerk.ts
 import { currentUser } from "@clerk/nextjs/server";
 import { prisma } from "./prisma";
-import { execSync } from "child_process";
 
 export async function getOrCreateUser() {
   const clerkUser = await currentUser();
   if (!clerkUser) return null;
 
-  const email = clerkUser.emailAddresses?.[0]?.emailAddress?.toLowerCase();
-  if (!email) throw new Error("Email not found on Clerk user");
+  const rawEmail = clerkUser.emailAddresses?.[0]?.emailAddress;
+  if (!rawEmail) throw new Error("Email not found on Clerk user");
+
+  const email = rawEmail.toLowerCase();
 
   try {
-    // Try normal path
-    let dbUser = await prisma.user.findUnique({
-      where: { clerkId: clerkUser.id },
-    });
+    // 1) If a user exists with this clerkId → return (update basic fields if missing)
+    let dbUser = await prisma.user.findUnique({ where: { clerkId: clerkUser.id } });
 
-    if (!dbUser) {
-      dbUser = await prisma.user.findUnique({ where: { email } });
+    if (dbUser) {
+      const needsUpdate =
+        (clerkUser.fullName && dbUser.name !== clerkUser.fullName) ||
+        (clerkUser.imageUrl && dbUser.image !== clerkUser.imageUrl) ||
+        dbUser.email !== email;
 
-      if (dbUser) {
-        // Existing guest user: link Clerk ID
+      if (needsUpdate) {
         dbUser = await prisma.user.update({
           where: { id: dbUser.id },
           data: {
-            clerkId: clerkUser.id,
-            name: clerkUser.fullName ?? dbUser.name ?? undefined,
-            image: clerkUser.imageUrl ?? dbUser.image ?? undefined,
-          },
-        });
-      } else {
-        // Fresh user
-        dbUser = await prisma.user.create({
-          data: {
-            clerkId: clerkUser.id,
+            name: clerkUser.fullName ?? dbUser.name,
+            image: clerkUser.imageUrl ?? dbUser.image,
             email,
-            name: clerkUser.fullName ?? undefined,
-            image: clerkUser.imageUrl ?? undefined,
-            packageType: "FREE",
-            teamQuota: 1,
-            tournamentQuota: 1,
           },
         });
       }
+      return dbUser;
     }
 
-    // Backfill displayName + link
-    await prisma.teamMember.updateMany({
-      where: { email },
-      data: {
-        userId: dbUser.id,
-        displayName: clerkUser.fullName ?? dbUser.name ?? undefined,
-      },
-    });
+    // 2) Try to find by email (existing guest record). If found, link clerkId and update only Clerk fields.
+    dbUser = await prisma.user.findUnique({ where: { email } });
 
-    return dbUser;
-  } catch (err: any) {
-    // If schema or table missing, rebuild automatically
-    if (
-      err.code === "P2021" ||
-      err.message?.includes("does not exist") ||
-      err.message?.includes("relation") ||
-      err.message?.includes("no such table")
-    ) {
-      console.warn("[⚠️] Database schema missing. Running prisma db push...");
-      try {
-        execSync("npx prisma db push", { stdio: "inherit" });
-        console.log("[✅] Schema recreated successfully.");
-      } catch (pushErr: any) {
-        console.error("[❌] Failed to run prisma db push:", pushErr);
-        throw pushErr;
-      }
+    if (dbUser) {
+      dbUser = await prisma.user.update({
+        where: { id: dbUser.id },
+        data: {
+          clerkId: clerkUser.id,
+          name: clerkUser.fullName ?? dbUser.name,
+          image: clerkUser.imageUrl ?? dbUser.image,
+          email, // normalize
+        },
+      });
 
-      // Retry user creation once schema exists
-      let dbUser = await prisma.user.findUnique({ where: { email } });
-      if (!dbUser) {
-        dbUser = await prisma.user.create({
-          data: {
-            clerkId: clerkUser.id,
-            email,
-            name: clerkUser.fullName ?? undefined,
-            image: clerkUser.imageUrl ?? undefined,
-            packageType: "FREE",
-            teamQuota: 1,
-            tournamentQuota: 1,
-          },
-        });
-      }
-
+      // Backfill teamMember displayName only (non-destructive)
       await prisma.teamMember.updateMany({
         where: { email },
-        data: {
-          userId: dbUser.id,
-          displayName: clerkUser.fullName ?? dbUser.name ?? undefined,
-        },
+        data: { userId: dbUser.id, displayName: dbUser.name ?? undefined },
       });
 
       return dbUser;
     }
 
-    // Unknown error, rethrow
-    console.error("[getOrCreateUser] Fatal error:", err);
+    // 3) No user exists by clerkId or email -> create new record
+    const newUser = await prisma.user.create({
+      data: {
+        clerkId: clerkUser.id,
+        email,
+        name: clerkUser.fullName ?? undefined,
+        image: clerkUser.imageUrl ?? undefined,
+        packageType: "FREE",
+        teamQuota: 1,
+        tournamentQuota: 1,
+        // stats default to schema defaults; do NOT override existing schema behavior
+      },
+    });
+
+    return newUser;
+  } catch (err: any) {
+    // Do NOT attempt to run migrations/db-push here.
+    // Surface a clear error for ops; let deploy/ops handle schema tasks.
+    console.error("[getOrCreateUser] error:", err?.message ?? err);
     throw err;
   }
 }
