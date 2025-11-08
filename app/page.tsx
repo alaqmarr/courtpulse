@@ -7,6 +7,7 @@ import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Drawer, DrawerTrigger, DrawerContent } from "@/components/ui/drawer";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import WinRateChart from "@/components/WinRateChart";
+import { formatInTimeZone } from "date-fns-tz";
 
 export const dynamic = "force-dynamic";
 
@@ -228,7 +229,7 @@ export default async function DashboardPage() {
                         >
                           <div className="font-medium">{t.name}</div>
                           <div className="text-xs text-muted-foreground">
-                            Created {t.createdAt.toLocaleDateString()}
+                            Created {formatInTimeZone(t.createdAt, "UTC", "MMMM dd, yyyy")}
                           </div>
                         </Link>
                       ))}
