@@ -1,12 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { getOrCreateUser } from "@/lib/clerk";
 import { redirect, notFound } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import { setGameWinnerAction } from "./actions";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-
+import { Badge } from "@/components/ui/badge";
 import GameCreator from "./GameCreator";
-import GamesList from "./components/GamesList";
-import LeaderboardTable from "./components/LeaderboardTable";
 
 export const dynamic = "force-dynamic";
 
@@ -24,25 +24,28 @@ export default async function SessionPage({
     where: { slug: sessionSlug },
     include: {
       team: {
-        include: { members: { include: { user: true } } },
+        include: {
+          owner: true,
+          members: { include: { user: true } },
+        },
       },
-      games: {
-        orderBy: { createdAt: "desc" },
-      },
+      games: true,
     },
   });
 
   if (!session) notFound();
 
-  const isOwner = session.team.ownerId === user.id;
-  const members = session.team.members.map((m) => ({
-    id: m.id,
-    name: m.user?.name || m.displayName || m.email.split("@")[0],
-    displayName: m.displayName || "",
-    email: m.email || "",
-  }));
+  const team = session.team;
+  const isOwner = team.ownerId === user.id;
+  const isMember = team.members.some((m) => m.userId === user.id);
+  const canManage = isOwner;
 
-  const leaderboard = computeLeaderboard(session.games);
+  const members = team.members.map((m) => ({
+    id: m.id,
+    name: m.user?.name || m.email.split("@")[0],
+    email: m.email,
+    displayName: m.displayName || m.user?.name || m.email.split("@")[0],
+  }));
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -54,13 +57,14 @@ export default async function SessionPage({
               {new Date(session.date).toLocaleDateString()}
             </p>
           </div>
-          {isOwner && (
+          {canManage && (
             <Button asChild variant="secondary">
               <a href={`/team/${slug}`}>Back to Team</a>
             </Button>
           )}
         </header>
 
+        {/* ----------- NEW GAME FORM ----------- */}
         {isOwner && (
           <Card>
             <CardHeader>
@@ -76,59 +80,115 @@ export default async function SessionPage({
           </Card>
         )}
 
-        <GamesList
-          games={session.games}
-          teamSlug={slug}
-          sessionSlug={sessionSlug}
-          isOwner={isOwner}
-        />
+        {/* ----------- GAMES LIST ----------- */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Games Played</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {session.games.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                No games created yet.
+              </p>
+            ) : (
+              <ul className="divide-y divide-border rounded-md border">
+                {session.games
+                  .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+                  .map((g) => (
+                    <li
+                      key={g.id}
+                      className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 gap-2"
+                    >
+                      <div>
+                        <p className="font-semibold text-sm">
+                          {`Game ${g.slug.split("-").slice(-1)}`}
+                        </p>
+                        <div className="text-xs mt-1 space-y-1">
+                          <div className="flex items-center gap-2">
+                            <Badge
+                              variant={
+                                g.winner === "A"
+                                  ? "default"
+                                  : g.winner
+                                    ? "outline"
+                                    : "secondary"
+                              }
+                            >
+                              Team A
+                            </Badge>
+                            <span>{g.teamAPlayers.join(", ")}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge
+                              variant={
+                                g.winner === "B"
+                                  ? "default"
+                                  : g.winner
+                                    ? "outline"
+                                    : "secondary"
+                              }
+                            >
+                              Team B
+                            </Badge>
+                            <span>{g.teamBPlayers.join(", ")}</span>
+                          </div>
+                        </div>
+                      </div>
 
-        {leaderboard.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Session Leaderboard</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <LeaderboardTable leaderboard={leaderboard} />
-            </CardContent>
-          </Card>
-        )}
+                      {/* ----------- WINNER BUTTONS (Owner/Member Access) ----------- */}
+                      {canManage && !g.winner && (
+                        <form
+                          action={async (formData) => {
+                            "use server";
+                            const winner = formData.get("winner") as "A" | "B";
+                            await setGameWinnerAction(
+                              slug,
+                              sessionSlug,
+                              g.slug,
+                              winner
+                            );
+                            revalidatePath(`/team/${slug}/session/${sessionSlug}`);
+                          }}
+                        >
+                          <div className="flex gap-2">
+                            <Button
+                              type="submit"
+                              name="winner"
+                              value="A"
+                              size="sm"
+                              variant="secondary"
+                            >
+                              Team A Won
+                            </Button>
+                            <Button
+                              type="submit"
+                              name="winner"
+                              value="B"
+                              size="sm"
+                              variant="secondary"
+                            >
+                              Team B Won
+                            </Button>
+                          </div>
+                        </form>
+                      )}
+
+                      {/* ----------- WINNER BADGE (No Access / Already Marked) ----------- */}
+                      {g.winner && (
+                        <Badge
+                          variant="default"
+                          className="text-xs font-semibold"
+                        >
+                          {g.winner === "A" ? "Team A Won" : "Team B Won"}
+                        </Badge>
+                      )}
+                    </li>
+                  ))}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </main>
-  );
-}
-
-/* ------------------- Helper ------------------- */
-function computeLeaderboard(games: any[]) {
-  const stats: Record<
-    string,
-    { name: string; wins: number; losses: number; points: number }
-  > = {};
-
-  for (const g of games) {
-    const allPlayers = [...g.teamAPlayers, ...g.teamBPlayers];
-    for (const name of allPlayers) {
-      if (!stats[name]) stats[name] = { name, wins: 0, losses: 0, points: 0 };
-    }
-
-    if (!g.winner) continue;
-
-    const winners = g.winner === "A" ? g.teamAPlayers : g.teamBPlayers;
-    const losers = g.winner === "A" ? g.teamBPlayers : g.teamAPlayers;
-
-    for (const name of winners) {
-      stats[name].wins++;
-      stats[name].points += 10;
-    }
-
-    for (const name of losers) {
-      stats[name].losses++;
-      stats[name].points += 2;
-    }
-  }
-
-  return Object.values(stats).sort(
-    (a, b) =>
-      b.wins - a.wins || b.points - a.points || a.name.localeCompare(b.name)
   );
 }
