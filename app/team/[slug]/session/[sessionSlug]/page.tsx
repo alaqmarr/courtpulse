@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import GameCreator from "./GameCreator";
 import GamesList from "./GameList";
-
+import { formatInTimeZone } from "date-fns-tz";
 export const dynamic = "force-dynamic";
 
 export default async function SessionPage({
@@ -51,7 +51,7 @@ export default async function SessionPage({
           <div>
             <h1 className="text-2xl font-bold">{session.name || "Session"}</h1>
             <p className="text-sm text-muted-foreground">
-              {new Date(session.date).toLocaleDateString()}
+              {formatInTimeZone(session.createdAt, "UTC", "MMMM dd, yyyy")}
             </p>
           </div>
           {canManage && (
