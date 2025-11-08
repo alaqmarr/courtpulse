@@ -96,8 +96,8 @@ export default async function PackagesPage() {
                             <Card
                                 key={pkg.type}
                                 className={`border rounded-2xl transition ${isActive
-                                        ? "border-primary shadow-lg"
-                                        : "hover:shadow-md border-muted"
+                                    ? "border-primary shadow-lg"
+                                    : "hover:shadow-md border-muted"
                                     }`}
                             >
                                 <CardHeader>
@@ -138,7 +138,7 @@ export default async function PackagesPage() {
                                             Current Plan
                                         </Button>
                                     ) : isUpgradable ? (
-                                        <form action={updatePackageAction.bind(null, pkg.type as any)}>
+                                        <form action={redirect(`https://wa.me/+919618443558?text=I%20want%20to%20upgrade%20to%20the%20${pkg.type}%20package%20on%20CourtPulse.`)}>
                                             <Button type="submit" className="w-full">
                                                 Upgrade Now
                                             </Button>
