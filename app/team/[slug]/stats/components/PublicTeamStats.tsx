@@ -154,7 +154,6 @@ function LeaderboardTable({
             <th className="py-2 px-3 text-green-600">Wins</th>
             <th className="py-2 px-3 text-red-500">Losses</th>
             <th className="py-2 px-3">Win Rate</th>
-            <th className="py-2 px-3">Points</th>
           </tr>
         </thead>
         <tbody>
@@ -174,7 +173,6 @@ function LeaderboardTable({
                 <td className="py-2 px-3 text-green-600">{p.wins}</td>
                 <td className="py-2 px-3 text-red-500">{p.losses}</td>
                 <td className="py-2 px-3">{rate}%</td>
-                <td className="py-2 px-3">{p.points}</td>
               </tr>
             );
           })}
