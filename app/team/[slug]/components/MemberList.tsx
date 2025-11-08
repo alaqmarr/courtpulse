@@ -28,7 +28,7 @@ export default function MemberList({
               >
                 <div className="flex flex-col">
                   <span className="font-medium">
-                    {member.user?.name || member.email.split("@")[0]}
+                    {member.displayName || member.user?.name || member.email.split("@")[0]}
                   </span>
                   <span className="text-xs text-muted-foreground">
                     {member.email}

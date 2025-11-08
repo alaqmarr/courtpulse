@@ -62,15 +62,17 @@ enum ActivityType {
  */
 
 model User {
-  id        String   @id @default(cuid())
-  clerkId   String?  @unique
-  email     String   @unique
-  name      String?
-  avatarUrl String?
-  createdAt DateTime @default(now())
-  points    Int      @default(0)
-  wins      Int      @default(0)
-  losses    Int      @default(0)
+  id          String   @id @default(cuid())
+  clerkId     String?  @unique
+  email       String   @unique
+  name        String?
+  image       String?
+  avatarUrl   String?
+  displayName String?
+  createdAt   DateTime @default(now())
+  points      Int      @default(0)
+  wins        Int      @default(0)
+  losses      Int      @default(0)
 
   packageType     PackageType @default(FREE)
   teamQuota       Int         @default(0)
@@ -113,12 +115,13 @@ model Team {
 }
 
 model TeamMember {
-  id       String   @id @default(cuid())
-  teamId   String
-  userId   String?
-  email    String
-  role     Role     @default(MEMBER)
-  joinedAt DateTime @default(now())
+  id          String   @id @default(cuid())
+  teamId      String
+  userId      String?
+  displayName String?
+  email       String
+  role        Role     @default(MEMBER)
+  joinedAt    DateTime @default(now())
 
   team Team  @relation(fields: [teamId], references: [id])
   user User? @relation(fields: [userId], references: [id])

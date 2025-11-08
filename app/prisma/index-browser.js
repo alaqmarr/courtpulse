@@ -126,7 +126,9 @@ exports.Prisma.UserScalarFieldEnum = {
   clerkId: 'clerkId',
   email: 'email',
   name: 'name',
+  image: 'image',
   avatarUrl: 'avatarUrl',
+  displayName: 'displayName',
   createdAt: 'createdAt',
   points: 'points',
   wins: 'wins',
@@ -151,6 +153,7 @@ exports.Prisma.TeamMemberScalarFieldEnum = {
   id: 'id',
   teamId: 'teamId',
   userId: 'userId',
+  displayName: 'displayName',
   email: 'email',
   role: 'role',
   joinedAt: 'joinedAt'

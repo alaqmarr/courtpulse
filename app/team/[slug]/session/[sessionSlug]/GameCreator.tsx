@@ -13,7 +13,7 @@ export default function GameCreator({
 }: {
   teamSlug: string;
   sessionSlug: string;
-  members: { id: string; name: string }[];
+  members: { id: string; name: string; displayName: string; email: string; }[];
 }) {
   const [isPending, startTransition] = useTransition();
   const [teamA, setTeamA] = useState<string[]>([]);
@@ -128,7 +128,7 @@ export default function GameCreator({
                   checked={teamB.includes(m.name)}
                   onChange={() => handleSelect("B", m.name)}
                 />
-                {m.name}
+                {m.displayName || m.name || m.email.split("@")[0]}
               </label>
             ))}
           </div>

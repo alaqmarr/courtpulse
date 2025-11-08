@@ -37,7 +37,9 @@ export default async function SessionPage({
   const isOwner = session.team.ownerId === user.id;
   const members = session.team.members.map((m) => ({
     id: m.id,
-    name: m.user?.name || m.email.split("@")[0],
+    name: m.user?.name || m.displayName || m.email.split("@")[0],
+    displayName: m.displayName || "",
+    email: m.email || "",
   }));
 
   const leaderboard = computeLeaderboard(session.games);

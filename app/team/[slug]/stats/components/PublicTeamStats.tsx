@@ -17,7 +17,7 @@ import { Separator } from "@/components/ui/separator";
 export default function PublicTeamStats({ team }: { team: any }) {
   const games = team.sessions.flatMap((s: any) => s.games);
   const members = team.members.map((m: any) => ({
-    name: m.user?.name || m.email.split("@")[0],
+    name: m.displayName || m.user?.name || m.email.split("@")[0],
   }));
 
   const stats = calculateStats(games, members);

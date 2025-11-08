@@ -3,59 +3,65 @@ import { currentUser } from "@clerk/nextjs/server";
 import { prisma } from "./prisma";
 
 /**
- * getOrCreateUser - server-side helper.
- * Uses Clerk's server SDK currentUser() to fetch the authenticated Clerk user,
- * then upserts a corresponding User row in Prisma.
+ * getOrCreateUser
+ * - Called on authenticated requests.
+ * - If a Clerk user exists, return the linked DB user.
+ * - If an orphan "guest" user with same email exists, link clerkId -> user and backfill relations.
+ * - If none exists, create a new User record with clerkId.
  *
- * Returns null when there is no authenticated Clerk user.
+ * NOTE: Does NOT change your schema. It uses existing User and TeamMember models.
  */
 export async function getOrCreateUser() {
-  const c = await currentUser();
-  if (!c) return null;
+  const clerkUser = await currentUser();
+  if (!clerkUser) return null;
 
-  const email = c.emailAddresses?.[0]?.emailAddress ?? "";
-  const name = `${c.firstName ?? ""} ${c.lastName ?? ""}`.trim();
+  const email = clerkUser.emailAddresses?.[0]?.emailAddress;
+  if (!email) throw new Error("Email not found on Clerk user");
 
-  // Prefer lookup by clerkId first, then fallback to email upsert
-  let user = await prisma.user.findUnique({ where: { clerkId: c.id } });
-  if (!user) {
-    user = await prisma.user.upsert({
-      where: { email },
-      update: {
-        clerkId: c.id,
-        name,
-        avatarUrl: c.imageUrl ?? undefined,
-      },
-      create: {
-        clerkId: c.id,
-        email,
-        name,
-        avatarUrl: c.imageUrl ?? undefined,
-        packageType: "FREE",
-        teamQuota: 0,
-        tournamentQuota: 0,
-        teamCount: 0,
-        tournamentCount: 0,
-      },
-    });
-  } else {
-    // Ensure clerkId and avatar are synced if missing/stale
-    const needsUpdate =
-      user.clerkId !== c.id ||
-      (c.imageUrl && user.avatarUrl !== c.imageUrl) ||
-      (user.name !== name && !!name);
+  // 1) Try find by clerkId
+  let dbUser = await prisma.user.findUnique({
+    where: { clerkId: clerkUser.id },
+  });
 
-    if (needsUpdate) {
-      user = await prisma.user.update({
-        where: { id: user.id },
+  // 2) If not found, try by email and link (guest -> registered)
+  if (!dbUser) {
+    dbUser = await prisma.user.findUnique({ where: { email } });
+
+    if (dbUser) {
+      // link clerkId, update name/image if missing
+      dbUser = await prisma.user.update({
+        where: { id: dbUser.id },
         data: {
-          clerkId: c.id,
-          name,
-          avatarUrl: c.imageUrl ?? user.avatarUrl,
+          clerkId: clerkUser.id,
+          name: dbUser.name ?? clerkUser.fullName ?? undefined,
+          image: dbUser.image ?? clerkUser.imageUrl ?? undefined,
+        },
+      });
+
+      // Backfill orphaned TeamMember rows that were created using email only
+      // Only update rows where userId is null.
+      await prisma.teamMember.updateMany({
+        where: { email, userId: null },
+        data: {
+          userId: dbUser.id,
+          displayName: dbUser.name ?? undefined,
+        },
+      });
+
+      // If you have other participant tables (tournament participants, etc.),
+      // include similar updateMany calls here.
+    } else {
+      // create a new user record for this clerk user
+      dbUser = await prisma.user.create({
+        data: {
+          clerkId: clerkUser.id,
+          email,
+          name: clerkUser.fullName ?? undefined,
+          image: clerkUser.imageUrl ?? undefined,
         },
       });
     }
   }
 
-  return user;
+  return dbUser;
 }

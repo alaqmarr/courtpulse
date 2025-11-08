@@ -2471,7 +2471,9 @@ export namespace Prisma {
     clerkId: string | null
     email: string | null
     name: string | null
+    image: string | null
     avatarUrl: string | null
+    displayName: string | null
     createdAt: Date | null
     points: number | null
     wins: number | null
@@ -2489,7 +2491,9 @@ export namespace Prisma {
     clerkId: string | null
     email: string | null
     name: string | null
+    image: string | null
     avatarUrl: string | null
+    displayName: string | null
     createdAt: Date | null
     points: number | null
     wins: number | null
@@ -2507,7 +2511,9 @@ export namespace Prisma {
     clerkId: number
     email: number
     name: number
+    image: number
     avatarUrl: number
+    displayName: number
     createdAt: number
     points: number
     wins: number
@@ -2547,7 +2553,9 @@ export namespace Prisma {
     clerkId?: true
     email?: true
     name?: true
+    image?: true
     avatarUrl?: true
+    displayName?: true
     createdAt?: true
     points?: true
     wins?: true
@@ -2565,7 +2573,9 @@ export namespace Prisma {
     clerkId?: true
     email?: true
     name?: true
+    image?: true
     avatarUrl?: true
+    displayName?: true
     createdAt?: true
     points?: true
     wins?: true
@@ -2583,7 +2593,9 @@ export namespace Prisma {
     clerkId?: true
     email?: true
     name?: true
+    image?: true
     avatarUrl?: true
+    displayName?: true
     createdAt?: true
     points?: true
     wins?: true
@@ -2688,7 +2700,9 @@ export namespace Prisma {
     clerkId: string | null
     email: string
     name: string | null
+    image: string | null
     avatarUrl: string | null
+    displayName: string | null
     createdAt: Date
     points: number
     wins: number
@@ -2725,7 +2739,9 @@ export namespace Prisma {
     clerkId?: boolean
     email?: boolean
     name?: boolean
+    image?: boolean
     avatarUrl?: boolean
+    displayName?: boolean
     createdAt?: boolean
     points?: boolean
     wins?: boolean
@@ -2750,7 +2766,9 @@ export namespace Prisma {
     clerkId?: boolean
     email?: boolean
     name?: boolean
+    image?: boolean
     avatarUrl?: boolean
+    displayName?: boolean
     createdAt?: boolean
     points?: boolean
     wins?: boolean
@@ -2768,7 +2786,9 @@ export namespace Prisma {
     clerkId?: boolean
     email?: boolean
     name?: boolean
+    image?: boolean
     avatarUrl?: boolean
+    displayName?: boolean
     createdAt?: boolean
     points?: boolean
     wins?: boolean
@@ -2786,7 +2806,9 @@ export namespace Prisma {
     clerkId?: boolean
     email?: boolean
     name?: boolean
+    image?: boolean
     avatarUrl?: boolean
+    displayName?: boolean
     createdAt?: boolean
     points?: boolean
     wins?: boolean
@@ -2799,7 +2821,7 @@ export namespace Prisma {
     planExpiresAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "clerkId" | "email" | "name" | "avatarUrl" | "createdAt" | "points" | "wins" | "losses" | "packageType" | "teamQuota" | "tournamentQuota" | "teamCount" | "tournamentCount" | "planExpiresAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "clerkId" | "email" | "name" | "image" | "avatarUrl" | "displayName" | "createdAt" | "points" | "wins" | "losses" | "packageType" | "teamQuota" | "tournamentQuota" | "teamCount" | "tournamentCount" | "planExpiresAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     teamsOwned?: boolean | User$teamsOwnedArgs<ExtArgs>
     tournamentsOwned?: boolean | User$tournamentsOwnedArgs<ExtArgs>
@@ -2827,7 +2849,9 @@ export namespace Prisma {
       clerkId: string | null
       email: string
       name: string | null
+      image: string | null
       avatarUrl: string | null
+      displayName: string | null
       createdAt: Date
       points: number
       wins: number
@@ -3271,7 +3295,9 @@ export namespace Prisma {
     readonly clerkId: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
     readonly name: FieldRef<"User", 'String'>
+    readonly image: FieldRef<"User", 'String'>
     readonly avatarUrl: FieldRef<"User", 'String'>
+    readonly displayName: FieldRef<"User", 'String'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly points: FieldRef<"User", 'Int'>
     readonly wins: FieldRef<"User", 'Int'>
@@ -5046,6 +5072,7 @@ export namespace Prisma {
     id: string | null
     teamId: string | null
     userId: string | null
+    displayName: string | null
     email: string | null
     role: $Enums.Role | null
     joinedAt: Date | null
@@ -5055,6 +5082,7 @@ export namespace Prisma {
     id: string | null
     teamId: string | null
     userId: string | null
+    displayName: string | null
     email: string | null
     role: $Enums.Role | null
     joinedAt: Date | null
@@ -5064,6 +5092,7 @@ export namespace Prisma {
     id: number
     teamId: number
     userId: number
+    displayName: number
     email: number
     role: number
     joinedAt: number
@@ -5075,6 +5104,7 @@ export namespace Prisma {
     id?: true
     teamId?: true
     userId?: true
+    displayName?: true
     email?: true
     role?: true
     joinedAt?: true
@@ -5084,6 +5114,7 @@ export namespace Prisma {
     id?: true
     teamId?: true
     userId?: true
+    displayName?: true
     email?: true
     role?: true
     joinedAt?: true
@@ -5093,6 +5124,7 @@ export namespace Prisma {
     id?: true
     teamId?: true
     userId?: true
+    displayName?: true
     email?: true
     role?: true
     joinedAt?: true
@@ -5175,6 +5207,7 @@ export namespace Prisma {
     id: string
     teamId: string
     userId: string | null
+    displayName: string | null
     email: string
     role: $Enums.Role
     joinedAt: Date
@@ -5201,6 +5234,7 @@ export namespace Prisma {
     id?: boolean
     teamId?: boolean
     userId?: boolean
+    displayName?: boolean
     email?: boolean
     role?: boolean
     joinedAt?: boolean
@@ -5212,6 +5246,7 @@ export namespace Prisma {
     id?: boolean
     teamId?: boolean
     userId?: boolean
+    displayName?: boolean
     email?: boolean
     role?: boolean
     joinedAt?: boolean
@@ -5223,6 +5258,7 @@ export namespace Prisma {
     id?: boolean
     teamId?: boolean
     userId?: boolean
+    displayName?: boolean
     email?: boolean
     role?: boolean
     joinedAt?: boolean
@@ -5234,12 +5270,13 @@ export namespace Prisma {
     id?: boolean
     teamId?: boolean
     userId?: boolean
+    displayName?: boolean
     email?: boolean
     role?: boolean
     joinedAt?: boolean
   }
 
-  export type TeamMemberOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "teamId" | "userId" | "email" | "role" | "joinedAt", ExtArgs["result"]["teamMember"]>
+  export type TeamMemberOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "teamId" | "userId" | "displayName" | "email" | "role" | "joinedAt", ExtArgs["result"]["teamMember"]>
   export type TeamMemberInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     team?: boolean | TeamDefaultArgs<ExtArgs>
     user?: boolean | TeamMember$userArgs<ExtArgs>
@@ -5263,6 +5300,7 @@ export namespace Prisma {
       id: string
       teamId: string
       userId: string | null
+      displayName: string | null
       email: string
       role: $Enums.Role
       joinedAt: Date
@@ -5694,6 +5732,7 @@ export namespace Prisma {
     readonly id: FieldRef<"TeamMember", 'String'>
     readonly teamId: FieldRef<"TeamMember", 'String'>
     readonly userId: FieldRef<"TeamMember", 'String'>
+    readonly displayName: FieldRef<"TeamMember", 'String'>
     readonly email: FieldRef<"TeamMember", 'String'>
     readonly role: FieldRef<"TeamMember", 'Role'>
     readonly joinedAt: FieldRef<"TeamMember", 'DateTime'>
@@ -18513,7 +18552,9 @@ export namespace Prisma {
     clerkId: 'clerkId',
     email: 'email',
     name: 'name',
+    image: 'image',
     avatarUrl: 'avatarUrl',
+    displayName: 'displayName',
     createdAt: 'createdAt',
     points: 'points',
     wins: 'wins',
@@ -18544,6 +18585,7 @@ export namespace Prisma {
     id: 'id',
     teamId: 'teamId',
     userId: 'userId',
+    displayName: 'displayName',
     email: 'email',
     role: 'role',
     joinedAt: 'joinedAt'
@@ -18881,7 +18923,9 @@ export namespace Prisma {
     clerkId?: StringNullableFilter<"User"> | string | null
     email?: StringFilter<"User"> | string
     name?: StringNullableFilter<"User"> | string | null
+    image?: StringNullableFilter<"User"> | string | null
     avatarUrl?: StringNullableFilter<"User"> | string | null
+    displayName?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     points?: IntFilter<"User"> | number
     wins?: IntFilter<"User"> | number
@@ -18905,7 +18949,9 @@ export namespace Prisma {
     clerkId?: SortOrderInput | SortOrder
     email?: SortOrder
     name?: SortOrderInput | SortOrder
+    image?: SortOrderInput | SortOrder
     avatarUrl?: SortOrderInput | SortOrder
+    displayName?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     points?: SortOrder
     wins?: SortOrder
@@ -18932,7 +18978,9 @@ export namespace Prisma {
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     name?: StringNullableFilter<"User"> | string | null
+    image?: StringNullableFilter<"User"> | string | null
     avatarUrl?: StringNullableFilter<"User"> | string | null
+    displayName?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     points?: IntFilter<"User"> | number
     wins?: IntFilter<"User"> | number
@@ -18956,7 +19004,9 @@ export namespace Prisma {
     clerkId?: SortOrderInput | SortOrder
     email?: SortOrder
     name?: SortOrderInput | SortOrder
+    image?: SortOrderInput | SortOrder
     avatarUrl?: SortOrderInput | SortOrder
+    displayName?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     points?: SortOrder
     wins?: SortOrder
@@ -18982,7 +19032,9 @@ export namespace Prisma {
     clerkId?: StringNullableWithAggregatesFilter<"User"> | string | null
     email?: StringWithAggregatesFilter<"User"> | string
     name?: StringNullableWithAggregatesFilter<"User"> | string | null
+    image?: StringNullableWithAggregatesFilter<"User"> | string | null
     avatarUrl?: StringNullableWithAggregatesFilter<"User"> | string | null
+    displayName?: StringNullableWithAggregatesFilter<"User"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     points?: IntWithAggregatesFilter<"User"> | number
     wins?: IntWithAggregatesFilter<"User"> | number
@@ -19072,6 +19124,7 @@ export namespace Prisma {
     id?: StringFilter<"TeamMember"> | string
     teamId?: StringFilter<"TeamMember"> | string
     userId?: StringNullableFilter<"TeamMember"> | string | null
+    displayName?: StringNullableFilter<"TeamMember"> | string | null
     email?: StringFilter<"TeamMember"> | string
     role?: EnumRoleFilter<"TeamMember"> | $Enums.Role
     joinedAt?: DateTimeFilter<"TeamMember"> | Date | string
@@ -19083,6 +19136,7 @@ export namespace Prisma {
     id?: SortOrder
     teamId?: SortOrder
     userId?: SortOrderInput | SortOrder
+    displayName?: SortOrderInput | SortOrder
     email?: SortOrder
     role?: SortOrder
     joinedAt?: SortOrder
@@ -19097,6 +19151,7 @@ export namespace Prisma {
     NOT?: TeamMemberWhereInput | TeamMemberWhereInput[]
     teamId?: StringFilter<"TeamMember"> | string
     userId?: StringNullableFilter<"TeamMember"> | string | null
+    displayName?: StringNullableFilter<"TeamMember"> | string | null
     email?: StringFilter<"TeamMember"> | string
     role?: EnumRoleFilter<"TeamMember"> | $Enums.Role
     joinedAt?: DateTimeFilter<"TeamMember"> | Date | string
@@ -19108,6 +19163,7 @@ export namespace Prisma {
     id?: SortOrder
     teamId?: SortOrder
     userId?: SortOrderInput | SortOrder
+    displayName?: SortOrderInput | SortOrder
     email?: SortOrder
     role?: SortOrder
     joinedAt?: SortOrder
@@ -19123,6 +19179,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"TeamMember"> | string
     teamId?: StringWithAggregatesFilter<"TeamMember"> | string
     userId?: StringNullableWithAggregatesFilter<"TeamMember"> | string | null
+    displayName?: StringNullableWithAggregatesFilter<"TeamMember"> | string | null
     email?: StringWithAggregatesFilter<"TeamMember"> | string
     role?: EnumRoleWithAggregatesFilter<"TeamMember"> | $Enums.Role
     joinedAt?: DateTimeWithAggregatesFilter<"TeamMember"> | Date | string
@@ -19892,7 +19949,9 @@ export namespace Prisma {
     clerkId?: string | null
     email: string
     name?: string | null
+    image?: string | null
     avatarUrl?: string | null
+    displayName?: string | null
     createdAt?: Date | string
     points?: number
     wins?: number
@@ -19916,7 +19975,9 @@ export namespace Prisma {
     clerkId?: string | null
     email: string
     name?: string | null
+    image?: string | null
     avatarUrl?: string | null
+    displayName?: string | null
     createdAt?: Date | string
     points?: number
     wins?: number
@@ -19940,7 +20001,9 @@ export namespace Prisma {
     clerkId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     points?: IntFieldUpdateOperationsInput | number
     wins?: IntFieldUpdateOperationsInput | number
@@ -19964,7 +20027,9 @@ export namespace Prisma {
     clerkId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     points?: IntFieldUpdateOperationsInput | number
     wins?: IntFieldUpdateOperationsInput | number
@@ -19988,7 +20053,9 @@ export namespace Prisma {
     clerkId?: string | null
     email: string
     name?: string | null
+    image?: string | null
     avatarUrl?: string | null
+    displayName?: string | null
     createdAt?: Date | string
     points?: number
     wins?: number
@@ -20006,7 +20073,9 @@ export namespace Prisma {
     clerkId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     points?: IntFieldUpdateOperationsInput | number
     wins?: IntFieldUpdateOperationsInput | number
@@ -20024,7 +20093,9 @@ export namespace Prisma {
     clerkId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     points?: IntFieldUpdateOperationsInput | number
     wins?: IntFieldUpdateOperationsInput | number
@@ -20114,6 +20185,7 @@ export namespace Prisma {
 
   export type TeamMemberCreateInput = {
     id?: string
+    displayName?: string | null
     email: string
     role?: $Enums.Role
     joinedAt?: Date | string
@@ -20125,6 +20197,7 @@ export namespace Prisma {
     id?: string
     teamId: string
     userId?: string | null
+    displayName?: string | null
     email: string
     role?: $Enums.Role
     joinedAt?: Date | string
@@ -20132,6 +20205,7 @@ export namespace Prisma {
 
   export type TeamMemberUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20143,6 +20217,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     teamId?: StringFieldUpdateOperationsInput | string
     userId?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20152,6 +20227,7 @@ export namespace Prisma {
     id?: string
     teamId: string
     userId?: string | null
+    displayName?: string | null
     email: string
     role?: $Enums.Role
     joinedAt?: Date | string
@@ -20159,6 +20235,7 @@ export namespace Prisma {
 
   export type TeamMemberUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20168,6 +20245,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     teamId?: StringFieldUpdateOperationsInput | string
     userId?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21092,7 +21170,9 @@ export namespace Prisma {
     clerkId?: SortOrder
     email?: SortOrder
     name?: SortOrder
+    image?: SortOrder
     avatarUrl?: SortOrder
+    displayName?: SortOrder
     createdAt?: SortOrder
     points?: SortOrder
     wins?: SortOrder
@@ -21120,7 +21200,9 @@ export namespace Prisma {
     clerkId?: SortOrder
     email?: SortOrder
     name?: SortOrder
+    image?: SortOrder
     avatarUrl?: SortOrder
+    displayName?: SortOrder
     createdAt?: SortOrder
     points?: SortOrder
     wins?: SortOrder
@@ -21138,7 +21220,9 @@ export namespace Prisma {
     clerkId?: SortOrder
     email?: SortOrder
     name?: SortOrder
+    image?: SortOrder
     avatarUrl?: SortOrder
+    displayName?: SortOrder
     createdAt?: SortOrder
     points?: SortOrder
     wins?: SortOrder
@@ -21341,6 +21425,7 @@ export namespace Prisma {
     id?: SortOrder
     teamId?: SortOrder
     userId?: SortOrder
+    displayName?: SortOrder
     email?: SortOrder
     role?: SortOrder
     joinedAt?: SortOrder
@@ -21350,6 +21435,7 @@ export namespace Prisma {
     id?: SortOrder
     teamId?: SortOrder
     userId?: SortOrder
+    displayName?: SortOrder
     email?: SortOrder
     role?: SortOrder
     joinedAt?: SortOrder
@@ -21359,6 +21445,7 @@ export namespace Prisma {
     id?: SortOrder
     teamId?: SortOrder
     userId?: SortOrder
+    displayName?: SortOrder
     email?: SortOrder
     role?: SortOrder
     joinedAt?: SortOrder
@@ -23421,6 +23508,7 @@ export namespace Prisma {
 
   export type TeamMemberCreateWithoutUserInput = {
     id?: string
+    displayName?: string | null
     email: string
     role?: $Enums.Role
     joinedAt?: Date | string
@@ -23430,6 +23518,7 @@ export namespace Prisma {
   export type TeamMemberUncheckedCreateWithoutUserInput = {
     id?: string
     teamId: string
+    displayName?: string | null
     email: string
     role?: $Enums.Role
     joinedAt?: Date | string
@@ -23607,6 +23696,7 @@ export namespace Prisma {
     id?: StringFilter<"TeamMember"> | string
     teamId?: StringFilter<"TeamMember"> | string
     userId?: StringNullableFilter<"TeamMember"> | string | null
+    displayName?: StringNullableFilter<"TeamMember"> | string | null
     email?: StringFilter<"TeamMember"> | string
     role?: EnumRoleFilter<"TeamMember"> | $Enums.Role
     joinedAt?: DateTimeFilter<"TeamMember"> | Date | string
@@ -23703,7 +23793,9 @@ export namespace Prisma {
     clerkId?: string | null
     email: string
     name?: string | null
+    image?: string | null
     avatarUrl?: string | null
+    displayName?: string | null
     createdAt?: Date | string
     points?: number
     wins?: number
@@ -23726,7 +23818,9 @@ export namespace Prisma {
     clerkId?: string | null
     email: string
     name?: string | null
+    image?: string | null
     avatarUrl?: string | null
+    displayName?: string | null
     createdAt?: Date | string
     points?: number
     wins?: number
@@ -23751,6 +23845,7 @@ export namespace Prisma {
 
   export type TeamMemberCreateWithoutTeamInput = {
     id?: string
+    displayName?: string | null
     email: string
     role?: $Enums.Role
     joinedAt?: Date | string
@@ -23760,6 +23855,7 @@ export namespace Prisma {
   export type TeamMemberUncheckedCreateWithoutTeamInput = {
     id?: string
     userId?: string | null
+    displayName?: string | null
     email: string
     role?: $Enums.Role
     joinedAt?: Date | string
@@ -23903,7 +23999,9 @@ export namespace Prisma {
     clerkId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     points?: IntFieldUpdateOperationsInput | number
     wins?: IntFieldUpdateOperationsInput | number
@@ -23926,7 +24024,9 @@ export namespace Prisma {
     clerkId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     points?: IntFieldUpdateOperationsInput | number
     wins?: IntFieldUpdateOperationsInput | number
@@ -24107,7 +24207,9 @@ export namespace Prisma {
     clerkId?: string | null
     email: string
     name?: string | null
+    image?: string | null
     avatarUrl?: string | null
+    displayName?: string | null
     createdAt?: Date | string
     points?: number
     wins?: number
@@ -24130,7 +24232,9 @@ export namespace Prisma {
     clerkId?: string | null
     email: string
     name?: string | null
+    image?: string | null
     avatarUrl?: string | null
+    displayName?: string | null
     createdAt?: Date | string
     points?: number
     wins?: number
@@ -24204,7 +24308,9 @@ export namespace Prisma {
     clerkId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     points?: IntFieldUpdateOperationsInput | number
     wins?: IntFieldUpdateOperationsInput | number
@@ -24227,7 +24333,9 @@ export namespace Prisma {
     clerkId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     points?: IntFieldUpdateOperationsInput | number
     wins?: IntFieldUpdateOperationsInput | number
@@ -24487,7 +24595,9 @@ export namespace Prisma {
     clerkId?: string | null
     email: string
     name?: string | null
+    image?: string | null
     avatarUrl?: string | null
+    displayName?: string | null
     createdAt?: Date | string
     points?: number
     wins?: number
@@ -24510,7 +24620,9 @@ export namespace Prisma {
     clerkId?: string | null
     email: string
     name?: string | null
+    image?: string | null
     avatarUrl?: string | null
+    displayName?: string | null
     createdAt?: Date | string
     points?: number
     wins?: number
@@ -24669,7 +24781,9 @@ export namespace Prisma {
     clerkId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     points?: IntFieldUpdateOperationsInput | number
     wins?: IntFieldUpdateOperationsInput | number
@@ -24692,7 +24806,9 @@ export namespace Prisma {
     clerkId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     points?: IntFieldUpdateOperationsInput | number
     wins?: IntFieldUpdateOperationsInput | number
@@ -25387,7 +25503,9 @@ export namespace Prisma {
     clerkId?: string | null
     email: string
     name?: string | null
+    image?: string | null
     avatarUrl?: string | null
+    displayName?: string | null
     createdAt?: Date | string
     points?: number
     wins?: number
@@ -25410,7 +25528,9 @@ export namespace Prisma {
     clerkId?: string | null
     email: string
     name?: string | null
+    image?: string | null
     avatarUrl?: string | null
+    displayName?: string | null
     createdAt?: Date | string
     points?: number
     wins?: number
@@ -25449,7 +25569,9 @@ export namespace Prisma {
     clerkId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     points?: IntFieldUpdateOperationsInput | number
     wins?: IntFieldUpdateOperationsInput | number
@@ -25472,7 +25594,9 @@ export namespace Prisma {
     clerkId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     points?: IntFieldUpdateOperationsInput | number
     wins?: IntFieldUpdateOperationsInput | number
@@ -25495,7 +25619,9 @@ export namespace Prisma {
     clerkId?: string | null
     email: string
     name?: string | null
+    image?: string | null
     avatarUrl?: string | null
+    displayName?: string | null
     createdAt?: Date | string
     points?: number
     wins?: number
@@ -25518,7 +25644,9 @@ export namespace Prisma {
     clerkId?: string | null
     email: string
     name?: string | null
+    image?: string | null
     avatarUrl?: string | null
+    displayName?: string | null
     createdAt?: Date | string
     points?: number
     wins?: number
@@ -25557,7 +25685,9 @@ export namespace Prisma {
     clerkId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     points?: IntFieldUpdateOperationsInput | number
     wins?: IntFieldUpdateOperationsInput | number
@@ -25580,7 +25710,9 @@ export namespace Prisma {
     clerkId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     points?: IntFieldUpdateOperationsInput | number
     wins?: IntFieldUpdateOperationsInput | number
@@ -25603,7 +25735,9 @@ export namespace Prisma {
     clerkId?: string | null
     email: string
     name?: string | null
+    image?: string | null
     avatarUrl?: string | null
+    displayName?: string | null
     createdAt?: Date | string
     points?: number
     wins?: number
@@ -25626,7 +25760,9 @@ export namespace Prisma {
     clerkId?: string | null
     email: string
     name?: string | null
+    image?: string | null
     avatarUrl?: string | null
+    displayName?: string | null
     createdAt?: Date | string
     points?: number
     wins?: number
@@ -25665,7 +25801,9 @@ export namespace Prisma {
     clerkId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     points?: IntFieldUpdateOperationsInput | number
     wins?: IntFieldUpdateOperationsInput | number
@@ -25688,7 +25826,9 @@ export namespace Prisma {
     clerkId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     points?: IntFieldUpdateOperationsInput | number
     wins?: IntFieldUpdateOperationsInput | number
@@ -25862,6 +26002,7 @@ export namespace Prisma {
   export type TeamMemberCreateManyUserInput = {
     id?: string
     teamId: string
+    displayName?: string | null
     email: string
     role?: $Enums.Role
     joinedAt?: Date | string
@@ -25964,6 +26105,7 @@ export namespace Prisma {
 
   export type TeamMemberUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25973,6 +26115,7 @@ export namespace Prisma {
   export type TeamMemberUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     teamId?: StringFieldUpdateOperationsInput | string
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25981,6 +26124,7 @@ export namespace Prisma {
   export type TeamMemberUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     teamId?: StringFieldUpdateOperationsInput | string
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26067,6 +26211,7 @@ export namespace Prisma {
   export type TeamMemberCreateManyTeamInput = {
     id?: string
     userId?: string | null
+    displayName?: string | null
     email: string
     role?: $Enums.Role
     joinedAt?: Date | string
@@ -26107,6 +26252,7 @@ export namespace Prisma {
 
   export type TeamMemberUpdateWithoutTeamInput = {
     id?: StringFieldUpdateOperationsInput | string
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26116,6 +26262,7 @@ export namespace Prisma {
   export type TeamMemberUncheckedUpdateWithoutTeamInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26124,6 +26271,7 @@ export namespace Prisma {
   export type TeamMemberUncheckedUpdateManyWithoutTeamInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
