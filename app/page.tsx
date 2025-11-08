@@ -229,7 +229,7 @@ export default async function DashboardPage() {
                         >
                           <div className="font-medium">{t.name}</div>
                           <div className="text-xs text-muted-foreground">
-                            Created {formatInTimeZone(t.createdAt, "UTC", "MMMM dd, yyyy")}
+                            Created {formatInTimeZone(t.createdAt, "Asia/Kolkata", "MMMM dd, yyyy")}
                           </div>
                         </Link>
                       ))}

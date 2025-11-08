@@ -51,7 +51,7 @@ export default async function SessionPage({
           <div>
             <h1 className="text-2xl font-bold">{session.name || "Session"}</h1>
             <p className="text-sm text-muted-foreground">
-              {formatInTimeZone(session.createdAt, "UTC", "MMMM dd, yyyy")}
+              {formatInTimeZone(session.createdAt, "Asia/Kolkata", "MMMM dd, yyyy")}
             </p>
           </div>
           {canManage && (
