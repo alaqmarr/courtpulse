@@ -16,31 +16,61 @@ export default async function DashboardPage() {
     where: { id: user.id },
     include: {
       teamsOwned: {
-        include: { members: { include: { user: true } } },
+        include: {
+          members: true,
+          tournamentTeams: {
+            include: { tournament: true },
+          },
+        },
       },
       memberships: {
         include: {
           team: {
-            include: { members: { include: { user: true } } },
+            include: {
+              members: true,
+              tournamentTeams: {
+                include: { tournament: true },
+              },
+            },
           },
         },
       },
       tournamentsOwned: true,
     },
   });
+
   if (!dbUser) redirect("/sign-up");
 
-  // Merge owned + member teams (avoid duplicates)
+
+  // Teams (owned + member)
   const ownedTeams = dbUser.teamsOwned || [];
   const memberTeams = dbUser.memberships.map((m) => m.team);
   const allTeams = [
     ...ownedTeams,
-    ...memberTeams.filter(
-      (t) => !ownedTeams.some((o) => o.id === t.id)
+    ...memberTeams.filter((t) => !ownedTeams.some((o) => o.id === t.id)),
+  ];
+
+  // Tournaments (owned + participated)
+  const hostedTournaments = dbUser.tournamentsOwned || [];
+
+  const participatedTournaments = [
+    ...new Map(
+      allTeams
+        .flatMap((t) =>
+          t.tournamentTeams.map((tt) => tt.tournament)
+        )
+        .filter((t) => t != null)
+        .map((t) => [t.id, t]) // deduplicate
+    ).values(),
+  ];
+
+  const allTournaments = [
+    ...hostedTournaments,
+    ...participatedTournaments.filter(
+      (p) => !hostedTournaments.some((h) => h.id === p.id)
     ),
   ];
 
-  const tournaments = dbUser.tournamentsOwned || [];
 
 
   return (
@@ -152,13 +182,13 @@ export default async function DashboardPage() {
 
               <div>
                 <h2 className="font-semibold text-lg mb-2">Your Tournaments</h2>
-                {tournaments.length === 0 ? (
+                {allTournaments.length === 0 ? (
                   <p className="text-sm text-muted-foreground">
                     No tournaments hosted yet.
                   </p>
                 ) : (
                   <div className="space-y-2">
-                    {tournaments.map((t) => (
+                    {allTournaments.map((t) => (
                       <Link
                         key={t.id}
                         href={`/tournament/${t.slug}`}
@@ -230,7 +260,7 @@ export default async function DashboardPage() {
         <section>
           <div className="flex justify-between items-center mb-3">
             <h2 className="text-2xl font-semibold">Your Tournaments</h2>
-            {tournaments.length > 0 && (
+            {allTournaments.length > 0 && (
               <Link href="/create-tournament">
                 <Button size="sm" variant="outline">
                   + Add Tournament
@@ -239,17 +269,17 @@ export default async function DashboardPage() {
             )}
           </div>
 
-          {tournaments.length === 0 ? (
+          {allTournaments.length === 0 ? (
             <div className="rounded-xl border p-8 text-center text-sm text-muted-foreground">
-              You haven’t hosted any tournaments yet.{" "}
+              You haven’t hosted or joined any tournaments yet.{" "}
               <Link href="/create-tournament" className="underline">
-                Start one
+                Create one
               </Link>
               .
             </div>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {tournaments.map((t) => (
+              {allTournaments.map((t) => (
                 <Card
                   key={t.id}
                   className="hover:shadow-lg transition border rounded-xl"
@@ -274,6 +304,7 @@ export default async function DashboardPage() {
             </div>
           )}
         </section>
+
 
         {/* ---------------- PERFORMANCE CHARTS ---------------- */}
         <section>
