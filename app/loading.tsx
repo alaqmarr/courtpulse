@@ -1,5 +1,6 @@
 "use client";
 
+import Loader from "@/components/Laoder";
 import { motion } from "framer-motion";
 
 export default function Loading() {
@@ -35,24 +36,12 @@ export default function Loading() {
       </motion.p>
 
       {/* Progress bar */}
-      <motion.div
-        className="mt-10 w-40 sm:w-56 md:w-72 h-1.5 bg-muted rounded-full overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-      >
         <motion.div
-          className="h-full bg-primary"
-          initial={{ width: "0%" }}
-          animate={{ width: ["0%", "40%", "70%", "100%"] }}
-          transition={{
-            duration: 2.8,
-            repeat: Infinity,
-            repeatDelay: 0.4,
-            ease: "easeInOut",
-          }}
-        />
-      </motion.div>
+          className="mt-6 w-48 h-1 bg-muted/30 rounded-full overflow-hidden relative"
+          initial={{ opacity: 0 }}
+        >
+          <Loader />
+        </motion.div>
 
       {/* Footer */}
       <motion.p
