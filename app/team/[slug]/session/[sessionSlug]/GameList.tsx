@@ -29,7 +29,6 @@ export default function GamesList({
         ) : (
           <ul className="divide-y divide-border rounded-md border">
             {games
-              .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
               .map((g) => (
                 <GameItem
                   key={g.id}

@@ -27,7 +27,9 @@ export default async function SessionPage({
           members: { include: { user: true } },
         },
       },
-      games: true,
+      games: {
+        orderBy: { createdAt: "desc" },
+      }
     },
   });
 
